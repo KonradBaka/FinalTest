@@ -23,7 +23,7 @@ public class PositionController {
         this.modelMapper = modelMapper;
     }
 
-    @PostMapping("/employee/{employeeId}")
+    @PostMapping("/{employeeId}")
     public ResponseEntity<PositionDto> addPositionToEmployee(@PathVariable Long employeeId, @RequestBody PositionDto positionDto) {
         Position position = positionService.addPosition(employeeId, positionDto);
         PositionDto createdPositionDto = new ModelMapper().map(position, PositionDto.class);
@@ -37,7 +37,7 @@ public class PositionController {
         return ResponseEntity.ok(updatedPositionDto);
     }
 
-    @GetMapping("/employee/{employeeId}")
+    @GetMapping("/{employeeId}")
     public ResponseEntity<Set<PositionDto>> listPositionsForEmployee(@PathVariable Long employeeId) {
         Set<Position> positions = positionService.findPositionsByEmployeeId(employeeId);
         Set<PositionDto> positionDtos = positions.stream()

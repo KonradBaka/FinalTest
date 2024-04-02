@@ -27,13 +27,13 @@ public class FileImporterController {
         this.modelMapper = modelMapper;
     }
 
-    @PostMapping("/import")
+    @PostMapping
     public ResponseEntity<?> importCsv(@RequestParam("file") MultipartFile file) throws IOException {
         fileImportService.importFile(file);
         return ResponseEntity.accepted().body("Import w toku");
     }
 
-    @GetMapping("/import/status/{sessionId}")
+    @GetMapping("/status/{sessionId}")
     public ResponseEntity<ImportStatusDto> getImportStatus(@PathVariable Long sessionId) {
         ImportStatus session = importSessionRepository.findById(sessionId)
                 .orElseThrow(() -> new EntityNotFoundException("Nie znaleziono statusu: " + sessionId));
