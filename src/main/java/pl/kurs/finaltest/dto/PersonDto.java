@@ -1,0 +1,112 @@
+package pl.kurs.finaltest.dto;
+
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
+public class PersonDto {
+
+    @NotNull
+    private Long id;
+    @NotBlank(message = "Imię wymagane.")
+    private String firstName;
+    @NotBlank(message = "Nazwisko wymagane.")
+    private String lastName;
+    @NotBlank(message = "PESEL wymagany.")
+    private String pesel;
+    @NotBlank(message = "Wzrost wymagany.")
+    private Double height;
+    @NotBlank(message = "Waga wymagany.")
+    private Double weight;
+    @Email(message = "Niewłaściwy emial")
+    @NotBlank(message = "Email wymagany.")
+    private String emailAddress;
+    private String type;
+
+
+    public PersonDto() {
+    }
+
+    public PersonDto(String firstName, String lastName, String pesel, Double height, Double weight, String emailAddress) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.pesel = pesel;
+        this.height = height;
+        this.weight = weight;
+        this.emailAddress = emailAddress;
+    }
+
+    public PersonDto(String firstName, String lastName, String pesel, Double height, Double weight, String emailAddress, String type) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.pesel = pesel;
+        this.height = height;
+        this.weight = weight;
+        this.emailAddress = emailAddress;
+        this.type = type;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getPesel() {
+        return pesel;
+    }
+
+    public void setPesel(String pesel) {
+        this.pesel = pesel;
+    }
+
+    public Double getHeight() {
+        return height;
+    }
+
+    public void setHeight(Double height) {
+        this.height = height;
+    }
+
+    public Double getWeight() {
+        return weight;
+    }
+
+    public void setWeight(Double weight) {
+        this.weight = weight;
+    }
+
+    public String getEmailAddress() {
+        return emailAddress;
+    }
+
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
+    }
+}
