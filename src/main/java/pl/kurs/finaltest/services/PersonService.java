@@ -6,8 +6,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pl.kurs.finaltest.criteria.PersonCriteria;
 import pl.kurs.finaltest.dto.PersonDto;
-import pl.kurs.finaltest.entityspecification.SearchCriteria;
 import pl.kurs.finaltest.entityspecification.SpecificationManager;
 import pl.kurs.finaltest.models.Person;
 import pl.kurs.finaltest.repositories.PersonRepository;
@@ -38,13 +38,13 @@ public class PersonService implements IPersonService {
         return strategy.editPerson(id, personDto);
     }
 
-    public Page<Person> findPersons(SearchCriteria searchCriteria, Pageable pageable) {
+    public Page<Person> findPersons(PersonCriteria searchCriteria, Pageable pageable) {
         Specification<Person> spec = buildSpecificationFromCriteria(searchCriteria);
         return personRepository.findAll(spec, pageable);
     }
 
-    private Specification<Person> buildSpecificationFromCriteria(SearchCriteria searchCriteria) {
-        Specification<Person> typeSpec = specificationManager.getSpecification(searchCriteria.getType(), searchCriteria);
+    private Specification<Person> buildSpecificationFromCriteria(PersonCriteria searchCriteria) {
+        Specification<Person> typeSpec = specificationManager.getSpecification(searchCriteria);
         return Specification.where(typeSpec);
     }
 }

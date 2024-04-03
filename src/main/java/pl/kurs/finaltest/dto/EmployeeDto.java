@@ -42,4 +42,13 @@ public class EmployeeDto extends PersonDto {
     public void setCurrentSalary(Double currentSalary) {
         this.currentSalary = currentSalary;
     }
+
+    @Override
+    public String toString() {
+        return "EmployeeDto{" +
+                "employmentStartDate=" + employmentStartDate +
+                ", currentPosition='" + currentPosition + '\'' +
+                ", currentSalary=" + currentSalary +
+                '}';
+    }
 }

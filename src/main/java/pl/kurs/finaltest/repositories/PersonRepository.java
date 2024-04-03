@@ -16,4 +16,6 @@ public interface PersonRepository extends JpaRepository<Person, Long>, JpaSpecif
 
     @Query("SELECT p FROM Person p WHERE TYPE(p) = Employee AND p.id = :id")
     Optional<Employee> findEmployeeById(@Param("id") Long id);
+
+
 }

@@ -5,67 +5,70 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Component;
+import pl.kurs.finaltest.criteria.RetireeCriteria;
+import pl.kurs.finaltest.criteria.StudentCriteria;
 import pl.kurs.finaltest.models.Person;
-import pl.kurs.finaltest.models.Retiree;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class RetireeSpecification implements Specification<Person> {
-
-    private SearchCriteria criteria;
-
-    public RetireeSpecification(SearchCriteria criteria) {
-        this.criteria = criteria;
-    }
+@Component
+public class RetireeSpecification implements GenericSpecification<RetireeCriteria> {
 
     @Override
-    public Predicate toPredicate(Root<Person> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-        List<Predicate> predicates = new ArrayList<>();
-
-        if (criteria.getName() != null) {
-            predicates.add(cb.like(cb.lower(root.get("name")), "%" + criteria.getName().toLowerCase() + "%"));
-        }
-        if (criteria.getSurname() != null) {
-            predicates.add(cb.like(cb.lower(root.get("surname")), "%" + criteria.getSurname().toLowerCase() + "%"));
-        }
-        if (criteria.getPesel() != null) {
-            predicates.add(cb.equal(root.get("pesel"), criteria.getPesel()));
-        }
-        if (criteria.getEmail() != null) {
-            predicates.add(cb.like(cb.lower(root.get("email")), "%" + criteria.getEmail().toLowerCase() + "%"));
-        }
-        if (criteria.getHeightFrom() != null) {
-            predicates.add(cb.greaterThanOrEqualTo(root.get("height"), criteria.getHeightFrom()));
-        }
-        if (criteria.getHeightTo() != null) {
-            predicates.add(cb.lessThanOrEqualTo(root.get("height"), criteria.getHeightTo()));
-        }
-        if (criteria.getWeightFrom() != null) {
-            predicates.add(cb.greaterThanOrEqualTo(root.get("weight"), criteria.getWeightFrom()));
-        }
-        if (criteria.getWeightTo() != null) {
-            predicates.add(cb.lessThanOrEqualTo(root.get("weight"), criteria.getWeightTo()));
-        }
+    public Specification<Person> toSpecification(RetireeCriteria criteria) {
+        return (Root<Person> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
+            List<Predicate> predicates = new ArrayList<>();
 
 
+            if (criteria.getName() != null) {
+                predicates.add(cb.like(cb.lower(root.get("name")), "%" + criteria.getName().toLowerCase() + "%"));
+            }
+            if (criteria.getSurname() != null) {
+                predicates.add(cb.like(cb.lower(root.get("surname")), "%" + criteria.getSurname().toLowerCase() + "%"));
+            }
+            if (criteria.getPesel() != null) {
+                predicates.add(cb.equal(root.get("pesel"), criteria.getPesel()));
+            }
+            if (criteria.getEmail() != null) {
+                predicates.add(cb.like(cb.lower(root.get("email")), "%" + criteria.getEmail().toLowerCase() + "%"));
+            }
+            if (criteria.getHeightFrom() != null) {
+                predicates.add(cb.greaterThanOrEqualTo(root.get("height"), criteria.getHeightFrom()));
+            }
+            if (criteria.getHeightTo() != null) {
+                predicates.add(cb.lessThanOrEqualTo(root.get("height"), criteria.getHeightTo()));
+            }
+            if (criteria.getWeightFrom() != null) {
+                predicates.add(cb.greaterThanOrEqualTo(root.get("weight"), criteria.getWeightFrom()));
+            }
+            if (criteria.getWeightTo() != null) {
+                predicates.add(cb.lessThanOrEqualTo(root.get("weight"), criteria.getWeightTo()));
+            }
 
-        if (criteria.getPensionAmountFrom() != null) {
-            predicates.add(cb.greaterThanOrEqualTo(root.get("pensionAmount"), criteria.getPensionAmountFrom()));
-        }
 
-        if (criteria.getPensionAmountTo() != null) {
-            predicates.add(cb.lessThanOrEqualTo(root.get("pensionAmount"), criteria.getPensionAmountTo()));
-        }
+            if (criteria.getPensionAmountFrom() != null) {
+                predicates.add(cb.greaterThanOrEqualTo(root.get("pensionAmount"), criteria.getPensionAmountFrom()));
+            }
 
-        if (criteria.getYearsWorkedFrom() != null) {
-            predicates.add(cb.greaterThanOrEqualTo(root.get("yearsWorked"), criteria.getYearsWorkedFrom()));
-        }
+            if (criteria.getPensionAmountTo() != null) {
+                predicates.add(cb.lessThanOrEqualTo(root.get("pensionAmount"), criteria.getPensionAmountTo()));
+            }
 
-        if (criteria.getYearsWorkedTo() != null) {
-            predicates.add(cb.lessThanOrEqualTo(root.get("yearsWorked"), criteria.getYearsWorkedTo()));
-        }
+            if (criteria.getYearsWorkedFrom() != null) {
+                predicates.add(cb.greaterThanOrEqualTo(root.get("yearsWorked"), criteria.getYearsWorkedFrom()));
+            }
 
-        return cb.and(predicates.toArray(new Predicate[0]));
+            if (criteria.getYearsWorkedTo() != null) {
+                predicates.add(cb.lessThanOrEqualTo(root.get("yearsWorked"), criteria.getYearsWorkedTo()));
+            }
+
+            return cb.and(predicates.toArray(new Predicate[0]));
+        };
     }
-}
+        @Override
+        public String supports() {
+            return "retiree";
+        }
+    }

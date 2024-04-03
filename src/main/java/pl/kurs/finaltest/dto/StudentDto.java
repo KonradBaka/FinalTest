@@ -48,5 +48,13 @@ public class StudentDto extends PersonDto{
         this.scholarshipAmount = scholarshipAmount;
     }
 
-
+    @Override
+    public String toString() {
+        return "StudentDto{" +
+                "universityName='" + universityName + '\'' +
+                ", yearOfStudy=" + yearOfStudy +
+                ", fieldOfStudy='" + fieldOfStudy + '\'' +
+                ", scholarshipAmount=" + scholarshipAmount +
+                '}';
+    }
 }

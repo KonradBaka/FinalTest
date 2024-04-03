@@ -33,12 +33,12 @@ public class FileImporterController {
         return ResponseEntity.accepted().body("Import w toku");
     }
 
-    @GetMapping("/status/{sessionId}")
-    public ResponseEntity<ImportStatusDto> getImportStatus(@PathVariable Long sessionId) {
-        ImportStatus session = importSessionRepository.findById(sessionId)
-                .orElseThrow(() -> new EntityNotFoundException("Nie znaleziono statusu: " + sessionId));
+    @GetMapping("/status")
+    public ResponseEntity<ImportStatusDto> getImportStatus() {
+        ImportStatus latestSession = importSessionRepository.findTopByOrderByStartTimeDesc()
+                .orElseThrow(() -> new EntityNotFoundException("Nie znaleziono sesji."));
 
-        ImportStatusDto dto = modelMapper.map(session, ImportStatusDto.class);
+        ImportStatusDto dto = modelMapper.map(latestSession, ImportStatusDto.class);
         return ResponseEntity.ok(dto);
     }
 }

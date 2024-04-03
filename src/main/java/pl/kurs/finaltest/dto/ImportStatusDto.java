@@ -56,4 +56,15 @@ public class ImportStatusDto {
     public void setRecordsProcessed(long recordsProcessed) {
         this.recordsProcessed = recordsProcessed;
     }
+
+    @Override
+    public String toString() {
+        return "ImportStatusDto{" +
+                "id=" + id +
+                ", startTime=" + startTime +
+                ", endTime=" + endTime +
+                ", status='" + status + '\'' +
+                ", recordsProcessed=" + recordsProcessed +
+                '}';
+    }
 }

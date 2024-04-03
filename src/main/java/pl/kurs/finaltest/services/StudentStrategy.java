@@ -24,11 +24,7 @@ public class StudentStrategy implements PersonTypeStrategy {
 
     @Override
     public boolean supports(PersonDto personDto) {
-        if (personDto instanceof StudentDto) {
-            StudentDto studentDto = (StudentDto) personDto;
-            return studentDto.getUniversityName() != null && studentDto.getYearOfStudy() != null;
-        }
-        return false;
+        return "student".equalsIgnoreCase(personDto.getType());
     }
 
     @Override

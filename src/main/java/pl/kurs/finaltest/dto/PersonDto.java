@@ -6,8 +6,7 @@ import jakarta.validation.constraints.NotNull;
 
 public class PersonDto {
 
-    @NotNull
-    private Long id;
+    private String type;
     @NotBlank(message = "Imię wymagane.")
     private String firstName;
     @NotBlank(message = "Nazwisko wymagane.")
@@ -21,13 +20,13 @@ public class PersonDto {
     @Email(message = "Niewłaściwy emial")
     @NotBlank(message = "Email wymagany.")
     private String emailAddress;
-    private String type;
 
 
     public PersonDto() {
     }
 
-    public PersonDto(String firstName, String lastName, String pesel, Double height, Double weight, String emailAddress) {
+    public PersonDto(String type, String firstName, String lastName, String pesel, Double height, Double weight, String emailAddress) {
+        this.type = type;
         this.firstName = firstName;
         this.lastName = lastName;
         this.pesel = pesel;
@@ -36,15 +35,6 @@ public class PersonDto {
         this.emailAddress = emailAddress;
     }
 
-    public PersonDto(String firstName, String lastName, String pesel, Double height, Double weight, String emailAddress, String type) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.pesel = pesel;
-        this.height = height;
-        this.weight = weight;
-        this.emailAddress = emailAddress;
-        this.type = type;
-    }
 
     public String getType() {
         return type;
@@ -52,14 +42,6 @@ public class PersonDto {
 
     public void setType(String type) {
         this.type = type;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getFirstName() {
@@ -108,5 +90,18 @@ public class PersonDto {
 
     public void setEmailAddress(String emailAddress) {
         this.emailAddress = emailAddress;
+    }
+
+    @Override
+    public String toString() {
+        return "PersonDto{" +
+                "type='" + type + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", pesel='" + pesel + '\'' +
+                ", height=" + height +
+                ", weight=" + weight +
+                ", emailAddress='" + emailAddress + '\'' +
+                '}';
     }
 }

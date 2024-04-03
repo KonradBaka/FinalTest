@@ -9,10 +9,6 @@ public class RetireeDto extends PersonDto{
     @NotNull(message = "Lata pracy wymagane.")
     private Integer yearsWorked;
 
-    @Override
-    public String getType() {
-        return "Retiree";
-    }
 
     public Double getPensionAmount() {
         return pensionAmount;
@@ -28,5 +24,13 @@ public class RetireeDto extends PersonDto{
 
     public void setYearsWorked(Integer yearsWorked) {
         this.yearsWorked = yearsWorked;
+    }
+
+    @Override
+    public String toString() {
+        return "RetireeDto{" +
+                "pensionAmount=" + pensionAmount +
+                ", yearsWorked=" + yearsWorked +
+                '}';
     }
 }

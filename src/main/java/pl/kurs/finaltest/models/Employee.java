@@ -28,16 +28,16 @@ public class Employee extends Person {
     public Employee() {
     }
 
-    public Employee(String firstName, String lastName, String pesel, Double height, Double weight, String emailAddress, LocalDate employmentStartDate, String currentPosition, Double currentSalary, Set<Position> positions) {
-        super(firstName, lastName, pesel, height, weight, emailAddress);
+    public Employee(String type, String firstName, String lastName, String pesel, Double height, Double weight, String emailAddress, LocalDate employmentStartDate, String currentPosition, Double currentSalary, Set<Position> positions) {
+        super(type, firstName, lastName, pesel, height, weight, emailAddress);
         this.employmentStartDate = employmentStartDate;
         this.currentPosition = currentPosition;
         this.currentSalary = currentSalary;
         this.positions = positions;
     }
 
-    public Employee(Long id, String firstName, String lastName, String pesel, Double height, Double weight, String emailAddress, LocalDate employmentStartDate, String currentPosition, Double currentSalary, Set<Position> positions) {
-        super(id, firstName, lastName, pesel, height, weight, emailAddress);
+    public Employee(Long id, String type, String firstName, String lastName, String pesel, Double height, Double weight, String emailAddress, LocalDate employmentStartDate, String currentPosition, Double currentSalary, Set<Position> positions) {
+        super(id, type, firstName, lastName, pesel, height, weight, emailAddress);
         this.employmentStartDate = employmentStartDate;
         this.currentPosition = currentPosition;
         this.currentSalary = currentSalary;

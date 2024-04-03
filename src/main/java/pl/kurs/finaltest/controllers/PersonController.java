@@ -7,10 +7,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pl.kurs.finaltest.criteria.PersonCriteria;
 import pl.kurs.finaltest.dto.PersonDto;
 import pl.kurs.finaltest.models.Person;
 import pl.kurs.finaltest.services.PersonService;
-import pl.kurs.finaltest.entityspecification.SearchCriteria;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,7 +28,7 @@ public class PersonController {
     }
 
     @GetMapping
-    public ResponseEntity<List<PersonDto>> searchPersons(SearchCriteria searchCriteria, Pageable pageable) {
+    public ResponseEntity<List<PersonDto>> searchPersons(PersonCriteria searchCriteria, Pageable pageable) {
         Page<Person> persons = personService.findPersons(searchCriteria, pageable);
         List<PersonDto> personDtos = persons.getContent()
                 .stream()

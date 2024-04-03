@@ -24,7 +24,7 @@ public class RetireeStrategy implements PersonTypeStrategy {
 
     @Override
     public boolean supports(PersonDto personDto) {
-        return personDto instanceof RetireeDto && ((RetireeDto) personDto).getPensionAmount() != null;
+        return "retiree".equalsIgnoreCase(personDto.getType());
     }
 
     @Override

@@ -27,9 +27,9 @@ public class Position implements Serializable {
 
     @Column(name = "name")
     private String name;
-    @Column(name = "start date")
+    @Column(name = "start_date")
     private LocalDate startDate;
-    @Column(name = "end date")
+    @Column(name = "end_date")
     private LocalDate endDate;
     @Column(name = "salary")
     private Double salary;

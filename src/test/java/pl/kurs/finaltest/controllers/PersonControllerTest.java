@@ -15,13 +15,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.TestPropertySource;
+import pl.kurs.finaltest.criteria.PersonCriteria;
 import pl.kurs.finaltest.dto.PersonDto;
-import pl.kurs.finaltest.entityspecification.SearchCriteria;
 import pl.kurs.finaltest.models.Employee;
 import pl.kurs.finaltest.models.Person;
 import pl.kurs.finaltest.services.PersonService;
 
-import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -76,7 +75,7 @@ public class PersonControllerTest {
     @Test
     void shouldSearchPersonsSuccessfully() {
         // Given
-        SearchCriteria searchCriteria = new SearchCriteria();
+        PersonCriteria searchCriteria = new PersonCriteria();
         Pageable pageable = PageRequest.of(0, 10);
 
         Employee employee = new Employee();

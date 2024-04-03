@@ -12,8 +12,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import pl.kurs.finaltest.criteria.PersonCriteria;
 import pl.kurs.finaltest.dto.PersonDto;
-import pl.kurs.finaltest.entityspecification.SearchCriteria;
 import pl.kurs.finaltest.models.Employee;
 import pl.kurs.finaltest.models.Person;
 import pl.kurs.finaltest.repositories.PersonRepository;
@@ -81,7 +81,7 @@ public class PersonServiceTest {
     @Test
     void shouldSearchPersonsSuccessfully() {
         // Given
-        SearchCriteria searchCriteria = new SearchCriteria();
+        PersonCriteria searchCriteria = new PersonCriteria();
         Pageable pageable = PageRequest.of(0, 10);
         Page<Employee> expectedPage = new PageImpl<>(List.of(new Employee()));
 

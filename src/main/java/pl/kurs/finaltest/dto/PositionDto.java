@@ -58,4 +58,14 @@ public class PositionDto {
         this.salary = salary;
     }
 
+    @Override
+    public String toString() {
+        return "PositionDto{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", startDate=" + startDate +
+                ", endDate=" + endDate +
+                ", salary=" + salary +
+                '}';
+    }
 }

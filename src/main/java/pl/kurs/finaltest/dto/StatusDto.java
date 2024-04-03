@@ -11,4 +11,6 @@ public class StatusDto {
     public String getStatus() {
         return status;
     }
+
+
 }

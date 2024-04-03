@@ -25,11 +25,7 @@ public class EmployeeStrategy implements PersonTypeStrategy {
 
     @Override
     public boolean supports(PersonDto personDto) {
-        if (personDto instanceof EmployeeDto) {
-            EmployeeDto employeeDto = (EmployeeDto) personDto;
-            return employeeDto.getEmploymentStartDate() != null && employeeDto.getCurrentSalary() != null;
-        }
-        return false;
+        return "employee".equalsIgnoreCase(personDto.getType());
     }
 
     @Override

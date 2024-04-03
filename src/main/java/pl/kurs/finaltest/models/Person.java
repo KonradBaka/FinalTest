@@ -1,8 +1,6 @@
 package pl.kurs.finaltest.models;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -14,10 +12,11 @@ public abstract class Person implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(name = "first name")
+    @Column(name = "type")
+    private String type;
+    @Column(name = "first_name")
     private String firstName;
-    @Column(name = "last name")
+    @Column(name = "last_name")
     private String lastName;
     @Column(name = "pesel", unique = true)
     private String pesel;
@@ -25,8 +24,9 @@ public abstract class Person implements Serializable {
     private Double height;
     @Column(name = "weight")
     private Double weight;
-    @Column(name = "email adress")
+    @Column(name = "email_adress")
     private String emailAddress;
+
 
     @Version
     private Long version;
@@ -34,7 +34,8 @@ public abstract class Person implements Serializable {
     public Person() {
     }
 
-    public Person(String firstName, String lastName, String pesel, Double height, Double weight, String emailAddress) {
+    public Person(String type, String firstName, String lastName, String pesel, Double height, Double weight, String emailAddress) {
+        this.type = type;
         this.firstName = firstName;
         this.lastName = lastName;
         this.pesel = pesel;
@@ -43,8 +44,9 @@ public abstract class Person implements Serializable {
         this.emailAddress = emailAddress;
     }
 
-    public Person(Long id, String firstName, String lastName, String pesel, Double height, Double weight, String emailAddress) {
+    public Person(Long id, String type, String firstName, String lastName, String pesel, Double height, Double weight, String emailAddress) {
         this.id = id;
+        this.type = type;
         this.firstName = firstName;
         this.lastName = lastName;
         this.pesel = pesel;
@@ -53,12 +55,12 @@ public abstract class Person implements Serializable {
         this.emailAddress = emailAddress;
     }
 
-    public Long getVersion() {
-        return version;
+    public String getType() {
+        return type;
     }
 
-    public void setVersion(Long version) {
-        this.version = version;
+    public void setType(String type) {
+        this.type = type;
     }
 
     public Long getId() {
