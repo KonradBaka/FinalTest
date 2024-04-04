@@ -6,5 +6,4 @@ public class TypeIdentifierDto extends PersonDto{
         super();
         this.setType(type);
     }
-
 }

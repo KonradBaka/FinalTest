@@ -7,6 +7,7 @@ import jakarta.persistence.criteria.Root;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 import pl.kurs.finaltest.criteria.EmployeeCriteria;
+import pl.kurs.finaltest.criteria.StudentCriteria;
 import pl.kurs.finaltest.models.Person;
 
 import java.util.ArrayList;
@@ -72,6 +73,6 @@ public class EmployeeSpecification implements GenericSpecification<EmployeeCrite
 
     @Override
     public String supports() {
-        return "employee";
+        return EmployeeCriteria.class.getSimpleName().toLowerCase();
     }
 }

@@ -7,11 +7,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import pl.kurs.finaltest.dto.ImportStatusDto;
+import pl.kurs.finaltest.dto.StatusDto;
 import pl.kurs.finaltest.models.ImportStatus;
 import pl.kurs.finaltest.repositories.ImportSessionRepository;
 import pl.kurs.finaltest.services.FileImportService;
 
 import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/api/import")
@@ -28,17 +30,19 @@ public class FileImporterController {
     }
 
     @PostMapping
-    public ResponseEntity<?> importCsv(@RequestParam("file") MultipartFile file) throws IOException {
-        fileImportService.importFile(file);
-        return ResponseEntity.accepted().body("Import w toku");
+    public ResponseEntity<StatusDto> importCsv(@RequestParam("file") MultipartFile file) {
+        Long sessionId = fileImportService.importFile(file);
+        return ResponseEntity.ok(new StatusDto("Przetwarzanie pliku o ID: " + sessionId));
     }
 
-    @GetMapping("/status")
-    public ResponseEntity<ImportStatusDto> getImportStatus() {
-        ImportStatus latestSession = importSessionRepository.findTopByOrderByStartTimeDesc()
-                .orElseThrow(() -> new EntityNotFoundException("Nie znaleziono sesji."));
+    // Po uruchomieniu importu dostaje info z ID dzięki któremu wyszukuje status.
 
-        ImportStatusDto dto = modelMapper.map(latestSession, ImportStatusDto.class);
+    @GetMapping("/status/{sessionId}")
+    public ResponseEntity<ImportStatusDto> getImportStatus(@PathVariable Long sessionId) {
+        ImportStatus session = importSessionRepository.findById(sessionId)
+                .orElseThrow(() -> new EntityNotFoundException("Nie znaleziono sesji o ID: " + sessionId));
+
+        ImportStatusDto dto = modelMapper.map(session, ImportStatusDto.class);
         return ResponseEntity.ok(dto);
     }
 }

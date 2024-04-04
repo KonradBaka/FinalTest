@@ -12,6 +12,9 @@ public class PersonCriteria {
     private Double weightTo;
     private String email;
 
+    public PersonCriteria() {
+    }
+
     public String getType() {
         return type;
     }

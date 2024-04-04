@@ -8,6 +8,9 @@ public class StudentCriteria extends PersonCriteria {
     private Double scholarshipFrom;
     private Double scholarshipTo;
 
+    public StudentCriteria() {
+    }
+
     public String getUniversityName() {
         return universityName;
     }

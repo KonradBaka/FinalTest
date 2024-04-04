@@ -5,11 +5,14 @@ import pl.kurs.finaltest.models.Person;
 
 import java.util.Map;
 
-public interface PersonTypeStrategy {
+public interface PersonTypeStrategy<T extends Person, D extends PersonDto> {
+    Class<D> getHandledDtoClass();
 
     boolean supports(PersonDto personDto);
-    Person addPerson(PersonDto personDto);
-    Person editPerson(Long id, PersonDto personDTO);
-    Person importFromCsvRecord(Map<String, String> csvRecord);
 
+    T addPerson(D personDto);
+
+    T editPerson(Long id, D personDto);
+
+    T importFromCsvRecord(Map<String, String> csvRecord);
 }

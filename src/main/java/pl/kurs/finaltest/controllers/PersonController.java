@@ -9,11 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.kurs.finaltest.criteria.PersonCriteria;
 import pl.kurs.finaltest.dto.PersonDto;
-import pl.kurs.finaltest.models.Person;
 import pl.kurs.finaltest.services.PersonService;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/people")
@@ -28,26 +24,20 @@ public class PersonController {
     }
 
     @GetMapping
-    public ResponseEntity<List<PersonDto>> searchPersons(PersonCriteria searchCriteria, Pageable pageable) {
-        Page<Person> persons = personService.findPersons(searchCriteria, pageable);
-        List<PersonDto> personDtos = persons.getContent()
-                .stream()
-                .map(person -> modelMapper.map(person, PersonDto.class))
-                .collect(Collectors.toList());
+    public ResponseEntity<Page<PersonDto>> searchPersons(@ModelAttribute PersonCriteria searchCriteria, Pageable pageable) {
+        Page<PersonDto> personDtos = personService.findPersons(searchCriteria, pageable);
         return ResponseEntity.ok(personDtos);
     }
 
     @PostMapping
-    public ResponseEntity<PersonDto> addPerson(@RequestBody PersonDto personDto) {
-        Person person = personService.addPerson(personDto);
-        PersonDto createdPersonDto = new ModelMapper().map(person, PersonDto.class);
+    public ResponseEntity<?> addPerson(@RequestBody PersonDto personDto) {
+        PersonDto createdPersonDto = personService.addPerson(personDto);
         return new ResponseEntity<>(createdPersonDto, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PersonDto> editPerson(@PathVariable Long id, @RequestBody PersonDto personDto) {
-        Person updatedPerson = personService.editPerson(id, personDto);
-        PersonDto updatedPersonDto = new ModelMapper().map(updatedPerson, PersonDto.class);
+    public ResponseEntity<?> editPerson(@PathVariable Long id, @RequestBody PersonDto personDto) {
+        PersonDto updatedPersonDto = personService.editPerson(id, personDto);
         return ResponseEntity.ok(updatedPersonDto);
     }
 }

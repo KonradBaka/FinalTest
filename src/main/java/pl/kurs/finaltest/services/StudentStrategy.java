@@ -3,16 +3,19 @@ package pl.kurs.finaltest.services;
 import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import pl.kurs.finaltest.dto.EmployeeDto;
 import pl.kurs.finaltest.dto.PersonDto;
+import pl.kurs.finaltest.dto.RetireeDto;
 import pl.kurs.finaltest.dto.StudentDto;
 import pl.kurs.finaltest.models.Person;
+import pl.kurs.finaltest.models.Retiree;
 import pl.kurs.finaltest.models.Student;
 import pl.kurs.finaltest.repositories.PersonRepository;
 
 import java.util.Map;
 
 @Service
-public class StudentStrategy implements PersonTypeStrategy {
+public class StudentStrategy implements PersonTypeStrategy<Student, StudentDto> {
 
     private final PersonRepository personRepository;
     private final ModelMapper modelMapper;
@@ -23,25 +26,30 @@ public class StudentStrategy implements PersonTypeStrategy {
     }
 
     @Override
+    public Class<StudentDto> getHandledDtoClass() {
+        return StudentDto.class;
+    }
+
+    @Override
     public boolean supports(PersonDto personDto) {
-        return "student".equalsIgnoreCase(personDto.getType());
+        return personDto instanceof StudentDto || "student".equalsIgnoreCase(personDto.getType());
     }
 
     @Override
-    public Person addPerson(PersonDto personDto) {
-        Student student = modelMapper.map(personDto, Student.class);
+    public Student addPerson(StudentDto studentDto) {
+        Student student = modelMapper.map(studentDto, Student.class);
         return personRepository.save(student);
     }
 
     @Override
-    public Person editPerson(Long id, PersonDto personDto) {
+    public Student editPerson(Long id, StudentDto studentDto) {
         Student student = (Student) personRepository.findById(id).orElseThrow(EntityNotFoundException::new);
-        modelMapper.map(personDto, student);
+        modelMapper.map(studentDto, student);
         return personRepository.save(student);
     }
 
     @Override
-    public Person importFromCsvRecord(Map<String, String> csvRecord) {
+    public Student importFromCsvRecord(Map<String, String> csvRecord) {
         Student student = new Student();
 
         student.setFirstName(csvRecord.get("name"));

@@ -69,7 +69,7 @@ public class StudentSpecification implements GenericSpecification<StudentCriteri
 
     @Override
     public String supports() {
-        return "student";
+        return StudentCriteria.class.getSimpleName().toLowerCase();
     }
 
 }

@@ -28,24 +28,25 @@ public class PersonService implements IPersonService {
         this.modelMapper = modelMapper;
     }
 
-    public Person addPerson(PersonDto personDto) {
-        PersonTypeStrategy strategy = strategyManager.getStrategy(personDto);
-        return strategy.addPerson(personDto);
+    @Override
+    public <T extends PersonDto> T addPerson(T personDto) {
+        PersonTypeStrategy<? extends Person, T> strategy = strategyManager.getStrategy(personDto);
+        Person person = strategy.addPerson(personDto);
+        return modelMapper.map(person, (Class<T>) personDto.getClass());
     }
 
-    public Person editPerson(Long id, PersonDto personDto) {
-        PersonTypeStrategy strategy = strategyManager.getStrategy(personDto);
-        return strategy.editPerson(id, personDto);
+    @Override
+    public <T extends PersonDto> T editPerson(Long id, T personDto) {
+        PersonTypeStrategy<? extends Person, T> strategy = strategyManager.getStrategy(personDto);
+        Person person = strategy.editPerson(id, personDto);
+        return modelMapper.map(person, (Class<T>) personDto.getClass());
     }
 
-    public Page<Person> findPersons(PersonCriteria searchCriteria, Pageable pageable) {
-        Specification<Person> spec = buildSpecificationFromCriteria(searchCriteria);
-        return personRepository.findAll(spec, pageable);
-    }
-
-    private Specification<Person> buildSpecificationFromCriteria(PersonCriteria searchCriteria) {
-        Specification<Person> typeSpec = specificationManager.getSpecification(searchCriteria);
-        return Specification.where(typeSpec);
+    @Override
+    public <T extends PersonCriteria> Page<PersonDto> findPersons(T criteria, Pageable pageable) {
+        Specification<Person> spec = specificationManager.getSpecification(criteria);
+        Page<Person> persons = personRepository.findAll(spec, pageable);
+        return persons.map(person -> modelMapper.map(person, PersonDto.class));
     }
 }
 

@@ -13,7 +13,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "positions")
-public class Position implements Serializable {
+public class Position extends Employee implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -34,8 +34,6 @@ public class Position implements Serializable {
     @Column(name = "salary")
     private Double salary;
 
-    @Version
-    private Long version;
 
     public Position() {
     }
@@ -105,13 +103,6 @@ public class Position implements Serializable {
         this.salary = salary;
     }
 
-    public Long getVersion() {
-        return version;
-    }
-
-    public void setVersion(Long version) {
-        this.version = version;
-    }
 
 
     @Override

@@ -3,6 +3,7 @@ package pl.kurs.finaltest.services;
 import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import pl.kurs.finaltest.dto.EmployeeDto;
 import pl.kurs.finaltest.dto.PersonDto;
 import pl.kurs.finaltest.dto.PositionDto;
 import pl.kurs.finaltest.dto.RetireeDto;
@@ -12,7 +13,7 @@ import pl.kurs.finaltest.repositories.PersonRepository;
 import java.util.Map;
 
 @Service
-public class RetireeStrategy implements PersonTypeStrategy {
+public class RetireeStrategy implements PersonTypeStrategy<Retiree, RetireeDto> {
 
     private final PersonRepository personRepository;
     private final ModelMapper modelMapper;
@@ -23,25 +24,31 @@ public class RetireeStrategy implements PersonTypeStrategy {
     }
 
     @Override
+    public Class<RetireeDto> getHandledDtoClass() {
+        return RetireeDto.class;
+    }
+
+    @Override
     public boolean supports(PersonDto personDto) {
-        return "retiree".equalsIgnoreCase(personDto.getType());
+        return personDto instanceof RetireeDto || "retiree".equalsIgnoreCase(personDto.getType());
+
     }
 
     @Override
-    public Person addPerson(PersonDto personDto) {
-        Retiree retiree = modelMapper.map(personDto, Retiree.class);
+    public Retiree addPerson(RetireeDto retireeDto) {
+        Retiree retiree = modelMapper.map(retireeDto, Retiree.class);
         return personRepository.save(retiree);
     }
 
     @Override
-    public Person editPerson(Long id, PersonDto personDto) {
+    public Retiree editPerson(Long id, RetireeDto retireeDto) {
         Retiree retiree = (Retiree) personRepository.findById(id).orElseThrow(EntityNotFoundException::new);
-        modelMapper.map(personDto, retiree);
+        modelMapper.map(retireeDto, retiree);
         return personRepository.save(retiree);
     }
 
     @Override
-    public Person importFromCsvRecord(Map<String, String> csvRecord) {
+    public Retiree importFromCsvRecord(Map<String, String> csvRecord) {
         Retiree retiree = new Retiree();
 
         retiree.setFirstName(csvRecord.get("name"));

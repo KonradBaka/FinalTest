@@ -28,8 +28,13 @@ public class ImportStatus implements Serializable {
         this.startTime = startTime;
         this.endTime = endTime;
         this.status = status;
-        this.recordsProcessed = recordsProcessed;
+        this.recordsProcessed = 0;
     }
+
+    public synchronized void incrementRecordsProcessed() {
+        this.recordsProcessed++;
+    }
+
 
     public Long getId() {
         return id;

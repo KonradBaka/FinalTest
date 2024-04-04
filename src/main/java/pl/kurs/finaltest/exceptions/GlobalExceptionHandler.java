@@ -45,6 +45,28 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
     }
 
+    @ExceptionHandler({ImportInProgressException.class})
+    public ResponseEntity<ExceptionsResponseDto> handleImportInProgressException(ImportInProgressException e) {
+        ExceptionsResponseDto responseDto = new ExceptionsResponseDto(
+                List.of(e.getMessage()),
+                "BAD_REQUEST",
+                Timestamp.from(Instant.now())
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
+    }
+
+    @ExceptionHandler({InvalidInputData.class})
+    public ResponseEntity<ExceptionsResponseDto> handleInvalidInputData(InvalidInputData e) {
+        ExceptionsResponseDto responseDto = new ExceptionsResponseDto(
+                List.of(e.getMessage()),
+                "BAD_REQUEST",
+                Timestamp.from(Instant.now())
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
+    }
+
+
+
 
     private List<String> getMessagesList(MethodArgumentNotValidException e) {
         return e.getFieldErrors()

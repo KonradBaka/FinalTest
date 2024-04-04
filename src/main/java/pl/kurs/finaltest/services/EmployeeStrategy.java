@@ -12,7 +12,7 @@ import pl.kurs.finaltest.repositories.PersonRepository;
 import java.util.Map;
 
 @Service
-public class EmployeeStrategy implements PersonTypeStrategy {
+public class EmployeeStrategy implements PersonTypeStrategy<Employee, EmployeeDto> {
 
     private final PersonRepository personRepository;
     private final ModelMapper modelMapper;
@@ -24,25 +24,30 @@ public class EmployeeStrategy implements PersonTypeStrategy {
     }
 
     @Override
-    public boolean supports(PersonDto personDto) {
-        return "employee".equalsIgnoreCase(personDto.getType());
+    public Class<EmployeeDto> getHandledDtoClass() {
+        return EmployeeDto.class;
     }
 
     @Override
-    public Person addPerson(PersonDto personDto) {
+    public boolean supports(PersonDto personDto) {
+        return personDto instanceof EmployeeDto || "employee".equalsIgnoreCase(personDto.getType());
+    }
+
+    @Override
+    public Employee addPerson(EmployeeDto personDto) {
         Employee employee = modelMapper.map(personDto, Employee.class);
         return personRepository.save(employee);
     }
 
     @Override
-    public Person editPerson(Long id, PersonDto personDto) {
+    public Employee editPerson(Long id, EmployeeDto employeeDto) {
         Employee employee = (Employee) personRepository.findById(id).orElseThrow(EntityNotFoundException::new);
-        modelMapper.map(personDto, employee);
+        modelMapper.map(employeeDto, employee);
         return personRepository.save(employee);
     }
 
     @Override
-    public Person importFromCsvRecord(Map<String, String> csvRecord) {
+    public Employee importFromCsvRecord(Map<String, String> csvRecord) {
         Employee employee = new Employee();
         employee.setFirstName(csvRecord.get("name"));
         employee.setLastName(csvRecord.get("surname"));

@@ -5,18 +5,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import pl.kurs.finaltest.dto.TypeIdentifierDto;
+import pl.kurs.finaltest.exceptions.ImportInProgressException;
 import pl.kurs.finaltest.models.ImportStatus;
 import pl.kurs.finaltest.repositories.ImportSessionRepository;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
-@Transactional
 public class FileImportService implements IFileImportService {
+
+    private AtomicBoolean importInProgress = new AtomicBoolean(false);
 
     private CsvParserService csvParserService;
     private PersonStrategyManager strategyManager;
@@ -28,40 +28,64 @@ public class FileImportService implements IFileImportService {
         this.importSessionRepository = importSessionRepository;
     }
 
+
     @Async
-    public CompletableFuture<String> importFile(MultipartFile file) throws IOException {
-        ImportStatus session = new ImportStatus();
+    @Transactional
+    public Long importFile(MultipartFile file) throws ImportInProgressException {
+
+        //Tego wcześniej zapomniałem dodać
+        if (!importInProgress.compareAndSet(false, true)) {
+            throw new ImportInProgressException("Inny import jest przetwarzany.");
+        }
+
+        final ImportStatus session = new ImportStatus();
         session.setStartTime(LocalDateTime.now());
         session.setStatus("IN_PROGRESS");
-        session = importSessionRepository.save(session);
+        ImportStatus savedSession = importSessionRepository.save(session);
 
+        // Do wykonywania asynchronicznego
+        CompletableFuture.runAsync(() -> processFileAsync(file, savedSession))
+                .thenRun(() -> importInProgress.set(false));
+
+        return savedSession.getId();
+    }
+
+    private void processFileAsync(MultipartFile file, ImportStatus session) {
         try {
-            List<Map<String, String>> records = csvParserService.parseCsv(file.getInputStream());
+            processFile(file, session);
+            updateSessionStatus(session, "COMPLETED");
+        } catch (Exception e) {
+            updateSessionStatus(session, "FAILED");
+        } finally {
+            importInProgress.set(false);
+        }
+    }
 
-            for (Map<String, String> record : records) {
+    private void processFile(MultipartFile file, ImportStatus session) {
+        try {
+            // przekazuje pojedynczo aby zapobiec out of memory error
+            csvParserService.parseCsv(file.getInputStream(), record -> {
                 String type = record.get("TYPE");
                 if (type != null) {
                     TypeIdentifierDto typeIdentifierDto = new TypeIdentifierDto(type);
-                    try {
-                        PersonTypeStrategy strategy = strategyManager.getStrategy(typeIdentifierDto);
-                        strategy.importFromCsvRecord(record);
-                    } catch (Exception e) {
-                        throw new RuntimeException("Błąd");
-                    }
+                    PersonTypeStrategy strategy = strategyManager.getStrategy(typeIdentifierDto);
+                    strategy.importFromCsvRecord(record);
+                    session.incrementRecordsProcessed();
                 } else {
                     throw new RuntimeException("Nie znaleziono typu");
                 }
-            }
-
-            session.setEndTime(LocalDateTime.now());
-            session.setStatus("COMPLETED");
-            importSessionRepository.save(session);
+            });
         } catch (Exception e) {
-            session.setStatus("FAILED");
-        } finally {
-            session.setEndTime(LocalDateTime.now());
-            importSessionRepository.save(session);
+            throw new RuntimeException("Błąd podczas przetwarzania pliku", e);
         }
-        return CompletableFuture.completedFuture(session.getStatus().equals("COMPLETED") ? "Import udany" : "Import nieudany");
+    }
+
+    @Transactional
+    public void updateSessionStatus(ImportStatus session, String status) {
+        session.setStatus(status);
+        session.setEndTime(LocalDateTime.now());
+        importSessionRepository.save(session);
     }
 }
+
+

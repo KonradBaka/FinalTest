@@ -7,6 +7,9 @@ public class RetireeCriteria extends PersonCriteria{
     private Integer yearsWorkedFrom;
     private Integer yearsWorkedTo;
 
+    public RetireeCriteria() {
+    }
+
     public Double getPensionAmountFrom() {
         return pensionAmountFrom;
     }

@@ -10,6 +10,9 @@ public class EmployeeCriteria extends PersonCriteria{
     private LocalDate startDateOfEmploymentFrom;
     private LocalDate startDateOfEmploymentTo;
 
+    public EmployeeCriteria() {
+    }
+
     public String getCurrentPosition() {
         return currentPosition;
     }

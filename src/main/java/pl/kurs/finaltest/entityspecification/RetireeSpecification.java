@@ -7,7 +7,6 @@ import jakarta.persistence.criteria.Root;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 import pl.kurs.finaltest.criteria.RetireeCriteria;
-import pl.kurs.finaltest.criteria.StudentCriteria;
 import pl.kurs.finaltest.models.Person;
 
 import java.util.ArrayList;
@@ -69,6 +68,6 @@ public class RetireeSpecification implements GenericSpecification<RetireeCriteri
     }
         @Override
         public String supports() {
-            return "retiree";
+            return RetireeCriteria.class.getSimpleName().toLowerCase();
         }
     }
