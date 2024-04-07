@@ -1,19 +1,23 @@
 package pl.kurs.finaltest.dto;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
+import java.time.LocalDate;
 import java.util.Date;
 
+@JsonTypeName("position")
 public class PositionDto {
 
     private Long id;
     @NotBlank(message = "Nazwa stanowiska wymagana.")
     private String name;
     @NotNull(message = "Data rozpoczęcia pracy wymagana.")
-    private Date startDate;
+    private LocalDate startDate;
     @NotNull(message = "Data zakończenia pracy wymagana.")
-    private Date endDate;
+    private LocalDate endDate;
     @NotNull(message = "Pensja wymagana.")
     private Double salary;
 
@@ -34,19 +38,19 @@ public class PositionDto {
         this.name = name;
     }
 
-    public Date getStartDate() {
+    public LocalDate getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Date startDate) {
+    public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
     }
 
-    public Date getEndDate() {
+    public LocalDate getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(Date endDate) {
+    public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
     }
 
@@ -68,4 +72,6 @@ public class PositionDto {
                 ", salary=" + salary +
                 '}';
     }
+
+
 }

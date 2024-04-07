@@ -1,5 +1,8 @@
 package pl.kurs.finaltest.dto;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import jakarta.validation.constraints.NotNull;
 
 public class RetireeDto extends PersonDto{
@@ -32,5 +35,10 @@ public class RetireeDto extends PersonDto{
                 "pensionAmount=" + pensionAmount +
                 ", yearsWorked=" + yearsWorked +
                 '}';
+    }
+
+    @Override
+    public String getTypeIdentifier() {
+        return "retiree";
     }
 }

@@ -6,16 +6,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.kurs.finaltest.dto.PositionDto;
 import pl.kurs.finaltest.models.Employee;
-import pl.kurs.finaltest.models.Person;
 import pl.kurs.finaltest.models.Position;
 import pl.kurs.finaltest.repositories.PersonRepository;
 import pl.kurs.finaltest.repositories.PositionRepository;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 public class PositionService implements IPositionService {
 
     private PositionRepository positionRepository;
@@ -28,68 +29,45 @@ public class PositionService implements IPositionService {
         this.modelMapper = modelMapper;
     }
 
-
+    @Override
     public Position addPosition(Long employeeId, PositionDto positionDto) {
         Employee employee = fetchEmployeeById(employeeId);
-
         Position newPosition = modelMapper.map(positionDto, Position.class);
-        if (checkPositionOverlap(employee, newPosition)) {
-            throw new IllegalStateException("Daty nowych stanowisk pokrywają się z istniejącymi stanowiskami dla tego pracownika.");
+
+        if (checkForOverlappingPositions(employee.getId(), null, newPosition.getStartDate(), newPosition.getEndDate()) > 0) {
+            throw new IllegalStateException("Daty stanowisk pokrywają się z istniejącymi stanowiskami.");
         }
 
         newPosition.setEmployee(employee);
         return positionRepository.save(newPosition);
     }
 
-    private Employee fetchEmployeeById(Long employeeId) {
-        Person person = personRepository.findById(employeeId)
-                .orElseThrow(() -> new EntityNotFoundException("Nie znaleziono pracownika " + employeeId));
-        if (!(person instanceof Employee)) {
-            throw new IllegalArgumentException("Podany identyfikator nie należy do pracownika.");
-        }
-        return (Employee) person;
-    }
-
-
-
+    @Override
     public Position updatePosition(Long positionId, PositionDto positionDto) {
-        Position position = positionRepository.findById(positionId)
-                .orElseThrow(() -> new EntityNotFoundException("Pozycja nie została znaleziona: " + positionId));
+        Position position = positionRepository.findPositionByIdWithPessimisticLock(positionId)
+                .orElseThrow(() -> new EntityNotFoundException("Pozycja nie znaleziona: " + positionId));
 
-        LocalDate originalStartDate = position.getStartDate();
-        LocalDate originalEndDate = position.getEndDate();
-
-        modelMapper.map(positionDto, position);
-
-        Long overlappingCount = positionRepository.countOverlappingPositions(position.getEmployee().getId(), positionId, position.getStartDate(), position.getEndDate());
-        if (overlappingCount > 0) {
-            position.setStartDate(originalStartDate);
-            position.setEndDate(originalEndDate);
-            throw new IllegalStateException("Aktualizacja pozycji powoduje nakładanie się na istniejące pozycje.");
+        if (checkForOverlappingPositions(position.getEmployee().getId(), positionId, positionDto.getStartDate(), positionDto.getEndDate()) > 0) {
+            throw new IllegalStateException("Aktualizacja pozycji skutkuje nakładaniem się dat.");
         }
-
+        modelMapper.map(positionDto, position);
         return positionRepository.save(position);
     }
 
     public Set<Position> findPositionsByEmployeeId(Long employeeId) {
-        Employee employee = personRepository.findEmployeeById(employeeId)
-                .orElseThrow(() -> new EntityNotFoundException("Nie znleziono pracownika" + employeeId));
+        List<Position> positions = positionRepository.findByEmployeeId(employeeId);
+        return new HashSet<>(positions);
+    }
 
-        return employee.getPositions();
+    private long checkForOverlappingPositions(Long employeeId, Long excludePositionId, LocalDate startDate, LocalDate endDate) {
+        return positionRepository.countOverlappingPositions(employeeId, excludePositionId == null ? Long.MIN_VALUE : excludePositionId, startDate, endDate);
+    }
+
+    private Employee fetchEmployeeById(Long employeeId) {
+        return personRepository.findEmployeeById(employeeId)
+                .orElseThrow(() -> new EntityNotFoundException("Nie znaleziono pracownika: " + employeeId));
     }
 
 
-    private boolean checkPositionOverlap(Employee employee, Position newPosition) {
-        for (Position position : employee.getPositions()) {
-            boolean startsDuringAnotherPosition = !newPosition.getStartDate().isBefore(position.getStartDate()) && newPosition.getStartDate().isBefore(position.getEndDate());
-            boolean endsDuringAnotherPosition = !newPosition.getEndDate().isAfter(position.getEndDate()) && newPosition.getEndDate().isAfter(position.getStartDate());
-            boolean encompassesAnotherPosition = newPosition.getStartDate().isBefore(position.getStartDate()) && newPosition.getEndDate().isAfter(position.getEndDate());
-
-            if (startsDuringAnotherPosition || endsDuringAnotherPosition || encompassesAnotherPosition) {
-                return true;
-            }
-        }
-        return false;
-    }
 }
 

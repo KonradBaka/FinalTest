@@ -11,17 +11,23 @@ import java.util.Map;
 @Service
 public class PersonStrategyManager {
 
-    private final Map<Class<? extends PersonDto>, PersonTypeStrategy<? extends Person, ? extends PersonDto>> strategyMap;
+    private final Map<String, PersonTypeStrategy<? extends Person, ? extends PersonDto>> strategyMap = new HashMap<>();
 
     public PersonStrategyManager(List<PersonTypeStrategy<? extends Person, ? extends PersonDto>> strategies) {
-        strategyMap = new HashMap<>();
         for (PersonTypeStrategy<? extends Person, ? extends PersonDto> strategy : strategies) {
-            strategyMap.put(strategy.getHandledDtoClass(), strategy);
+            strategyMap.put(strategy.getHandledType().toLowerCase(), strategy);
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public <T extends PersonDto> PersonTypeStrategy<? extends Person, T> getStrategy(T personDto) {
-        return (PersonTypeStrategy<? extends Person, T>) strategyMap.get(personDto.getClass());
+    public PersonTypeStrategy<? extends Person, ? extends PersonDto> getStrategy(PersonDto personDto) {
+        String type = personDto.getType();
+        if (type == null || type.isEmpty()) {
+            throw new IllegalArgumentException("Typ nie może być pusty");
+        }
+        PersonTypeStrategy<? extends Person, ? extends PersonDto> strategy = strategyMap.get(type.toLowerCase());
+        if (strategy == null) {
+            throw new IllegalArgumentException("Nie znaleziono strategi: " + type);
+        }
+        return strategy;
     }
 }

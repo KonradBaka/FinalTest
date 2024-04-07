@@ -46,4 +46,9 @@ public class PositionCriteria extends EmployeeCriteria{
     public Double getSalaryTo() {
         return salaryTo;
     }
+
+    @Override
+    public String getType() {
+        return "position";
+    }
 }

@@ -6,5 +6,6 @@ import pl.kurs.finaltest.models.Person;
 
 public interface GenericSpecification<T extends PersonCriteria> {
     Specification<Person> toSpecification(T criteria);
+    Class<T> getCriteriaClass();
     String supports();
 }

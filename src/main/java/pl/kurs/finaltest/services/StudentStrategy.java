@@ -3,12 +3,8 @@ package pl.kurs.finaltest.services;
 import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-import pl.kurs.finaltest.dto.EmployeeDto;
 import pl.kurs.finaltest.dto.PersonDto;
-import pl.kurs.finaltest.dto.RetireeDto;
 import pl.kurs.finaltest.dto.StudentDto;
-import pl.kurs.finaltest.models.Person;
-import pl.kurs.finaltest.models.Retiree;
 import pl.kurs.finaltest.models.Student;
 import pl.kurs.finaltest.repositories.PersonRepository;
 
@@ -26,13 +22,13 @@ public class StudentStrategy implements PersonTypeStrategy<Student, StudentDto> 
     }
 
     @Override
-    public Class<StudentDto> getHandledDtoClass() {
-        return StudentDto.class;
+    public String getHandledType() {
+        return "student";
     }
 
     @Override
     public boolean supports(PersonDto personDto) {
-        return personDto instanceof StudentDto || "student".equalsIgnoreCase(personDto.getType());
+        return "student".equalsIgnoreCase(personDto.getType());
     }
 
     @Override
@@ -43,7 +39,7 @@ public class StudentStrategy implements PersonTypeStrategy<Student, StudentDto> 
 
     @Override
     public Student editPerson(Long id, StudentDto studentDto) {
-        Student student = (Student) personRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        Student student = (Student) personRepository.findPersonByIdWithPessimisticLock(id).orElseThrow(EntityNotFoundException::new);
         modelMapper.map(studentDto, student);
         return personRepository.save(student);
     }

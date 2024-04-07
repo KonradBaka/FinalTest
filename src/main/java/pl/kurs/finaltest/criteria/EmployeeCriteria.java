@@ -32,4 +32,9 @@ public class EmployeeCriteria extends PersonCriteria{
     public LocalDate getStartDateOfEmploymentTo() {
         return startDateOfEmploymentTo;
     }
+
+    @Override
+    public String getType() {
+        return "emoloyee";
+    }
 }

@@ -8,6 +8,7 @@ import pl.kurs.finaltest.dto.PositionDto;
 import pl.kurs.finaltest.models.Position;
 import pl.kurs.finaltest.services.PositionService;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -38,12 +39,11 @@ public class PositionController {
     }
 
     @GetMapping("/{employeeId}")
-    public ResponseEntity<Set<PositionDto>> listPositionsForEmployee(@PathVariable Long employeeId) {
+    public ResponseEntity<List<PositionDto>> listPositionsForEmployee(@PathVariable Long employeeId) {
         Set<Position> positions = positionService.findPositionsByEmployeeId(employeeId);
-        Set<PositionDto> positionDtos = positions.stream()
+        List<PositionDto> positionDtos = positions.stream()
                 .map(position -> modelMapper.map(position, PositionDto.class))
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
         return ResponseEntity.ok(positionDtos);
     }
-
 }

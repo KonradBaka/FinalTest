@@ -3,7 +3,9 @@ package pl.kurs.finaltest.entityspecification;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
+import pl.kurs.finaltest.criteria.PersonCriteria;
 import pl.kurs.finaltest.criteria.PositionCriteria;
+import pl.kurs.finaltest.criteria.RetireeCriteria;
 import pl.kurs.finaltest.models.Person;
 
 import java.util.ArrayList;
@@ -18,10 +20,10 @@ public class PositionSpecification implements GenericSpecification<PositionCrite
             List<Predicate> predicates = new ArrayList<>();
 
             if (criteria.getName() != null) {
-                predicates.add(cb.like(cb.lower(root.get("name")), "%" + criteria.getName().toLowerCase() + "%"));
+                predicates.add(cb.like(cb.lower(root.get("firstName")), "%" + criteria.getName().toLowerCase() + "%"));
             }
             if (criteria.getStartDateFrom() != null) {
-                predicates.add(cb.greaterThanOrEqualTo(root.get("startDate"), criteria.getStartDateFrom()));
+                predicates.add(cb.greaterThanOrEqualTo(root.get("lastName"), criteria.getStartDateFrom()));
             }
             if (criteria.getStartDateTo() != null) {
                 predicates.add(cb.lessThanOrEqualTo(root.get("startDate"), criteria.getStartDateTo()));
@@ -44,7 +46,13 @@ public class PositionSpecification implements GenericSpecification<PositionCrite
     }
 
     @Override
-    public String supports() {
-        return PositionCriteria.class.getSimpleName().toLowerCase();
+    public Class<PositionCriteria> getCriteriaClass() {
+        return PositionCriteria.class;
     }
+
+    @Override
+    public String supports() {
+        return "position";
+    }
+
 }

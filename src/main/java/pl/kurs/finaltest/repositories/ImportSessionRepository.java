@@ -7,6 +7,5 @@ import java.util.Optional;
 
 public interface ImportSessionRepository extends JpaRepository<ImportStatus, Long> {
 
-    Optional<ImportStatus> findTopByOrderByStartTimeDesc();
 
 }

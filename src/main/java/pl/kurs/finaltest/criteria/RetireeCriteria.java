@@ -25,4 +25,9 @@ public class RetireeCriteria extends PersonCriteria{
     public Integer getYearsWorkedTo() {
         return yearsWorkedTo;
     }
+
+    @Override
+    public String getType() {
+        return "retiree";
+    }
 }

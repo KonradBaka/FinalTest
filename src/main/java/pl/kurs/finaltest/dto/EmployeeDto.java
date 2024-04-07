@@ -1,5 +1,8 @@
 package pl.kurs.finaltest.dto;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotBlank;
@@ -50,5 +53,10 @@ public class EmployeeDto extends PersonDto {
                 ", currentPosition='" + currentPosition + '\'' +
                 ", currentSalary=" + currentSalary +
                 '}';
+    }
+
+    @Override
+    public String getTypeIdentifier() {
+        return "employee";
     }
 }

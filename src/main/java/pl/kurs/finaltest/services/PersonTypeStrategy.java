@@ -6,8 +6,7 @@ import pl.kurs.finaltest.models.Person;
 import java.util.Map;
 
 public interface PersonTypeStrategy<T extends Person, D extends PersonDto> {
-    Class<D> getHandledDtoClass();
-
+    String getHandledType();
     boolean supports(PersonDto personDto);
 
     T addPerson(D personDto);

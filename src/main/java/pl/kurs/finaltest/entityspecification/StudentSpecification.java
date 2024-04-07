@@ -6,6 +6,8 @@ import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
+import pl.kurs.finaltest.criteria.PersonCriteria;
+import pl.kurs.finaltest.criteria.RetireeCriteria;
 import pl.kurs.finaltest.criteria.StudentCriteria;
 import pl.kurs.finaltest.models.Person;
 
@@ -21,17 +23,17 @@ public class StudentSpecification implements GenericSpecification<StudentCriteri
         return (Root<Person> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
             List<Predicate> predicates = new ArrayList<>();
 
-            if (criteria.getName() != null) {
-                predicates.add(cb.like(cb.lower(root.get("firstName")), "%" + criteria.getName().toLowerCase() + "%"));
+            if (criteria.getFirstName() != null) {
+                predicates.add(cb.like(cb.lower(root.get("firstName")), "%" + criteria.getFirstName().toLowerCase() + "%"));
             }
-            if (criteria.getSurname() != null) {
-                predicates.add(cb.like(cb.lower(root.get("lastName")), "%" + criteria.getSurname().toLowerCase() + "%"));
+            if (criteria.getLastName() != null) {
+                predicates.add(cb.like(cb.lower(root.get("lastName")), "%" + criteria.getLastName().toLowerCase() + "%"));
             }
             if (criteria.getPesel() != null) {
                 predicates.add(cb.equal(root.get("pesel"), criteria.getPesel()));
             }
-            if (criteria.getEmail() != null) {
-                predicates.add(cb.like(cb.lower(root.get("email")), "%" + criteria.getEmail().toLowerCase() + "%"));
+            if (criteria.getEmailAddress() != null) {
+                predicates.add(cb.like(cb.lower(root.get("email")), "%" + criteria.getEmailAddress().toLowerCase() + "%"));
             }
             if (criteria.getHeightFrom() != null) {
                 predicates.add(cb.greaterThanOrEqualTo(root.get("height"), criteria.getHeightFrom()));
@@ -46,7 +48,6 @@ public class StudentSpecification implements GenericSpecification<StudentCriteri
                 predicates.add(cb.lessThanOrEqualTo(root.get("weight"), criteria.getWeightTo()));
             }
 
-            // Student-specific criteria
             if (criteria.getUniversityName() != null) {
                 predicates.add(cb.like(cb.lower(root.get("universityName")), "%" + criteria.getUniversityName().toLowerCase() + "%"));
             }
@@ -68,8 +69,13 @@ public class StudentSpecification implements GenericSpecification<StudentCriteri
     }
 
     @Override
+    public Class<StudentCriteria> getCriteriaClass() {
+        return StudentCriteria.class;
+    }
+
+    @Override
     public String supports() {
-        return StudentCriteria.class.getSimpleName().toLowerCase();
+        return "student";
     }
 
 }

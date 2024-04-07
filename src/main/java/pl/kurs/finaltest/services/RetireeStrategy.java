@@ -3,9 +3,7 @@ package pl.kurs.finaltest.services;
 import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-import pl.kurs.finaltest.dto.EmployeeDto;
 import pl.kurs.finaltest.dto.PersonDto;
-import pl.kurs.finaltest.dto.PositionDto;
 import pl.kurs.finaltest.dto.RetireeDto;
 import pl.kurs.finaltest.models.*;
 import pl.kurs.finaltest.repositories.PersonRepository;
@@ -24,8 +22,8 @@ public class RetireeStrategy implements PersonTypeStrategy<Retiree, RetireeDto> 
     }
 
     @Override
-    public Class<RetireeDto> getHandledDtoClass() {
-        return RetireeDto.class;
+    public String getHandledType() {
+        return "retiree";
     }
 
     @Override
@@ -42,7 +40,7 @@ public class RetireeStrategy implements PersonTypeStrategy<Retiree, RetireeDto> 
 
     @Override
     public Retiree editPerson(Long id, RetireeDto retireeDto) {
-        Retiree retiree = (Retiree) personRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        Retiree retiree = (Retiree) personRepository.findPersonByIdWithPessimisticLock(id).orElseThrow(EntityNotFoundException::new);
         modelMapper.map(retireeDto, retiree);
         return personRepository.save(retiree);
     }

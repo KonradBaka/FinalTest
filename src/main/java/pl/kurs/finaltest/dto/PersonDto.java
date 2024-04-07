@@ -1,11 +1,20 @@
 package pl.kurs.finaltest.dto;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", visible = true)
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = RetireeDto.class, name = "retiree"),
+        @JsonSubTypes.Type(value = StudentDto.class, name = "student"),
+        @JsonSubTypes.Type(value = EmployeeDto.class, name = "employee")
+})
+public class PersonDto implements PersonMarker{
 
-public class PersonDto {
-
+    private Long id;
+    @NotBlank(message = "Typ wymagany.")
     private String type;
     @NotBlank(message = "Imię wymagane.")
     private String firstName;
@@ -25,7 +34,8 @@ public class PersonDto {
     public PersonDto() {
     }
 
-    public PersonDto(String type, String firstName, String lastName, String pesel, Double height, Double weight, String emailAddress) {
+    public PersonDto(Long id, String type, String firstName, String lastName, String pesel, Double height, Double weight, String emailAddress) {
+        this.id = id;
         this.type = type;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -35,6 +45,13 @@ public class PersonDto {
         this.emailAddress = emailAddress;
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getType() {
         return type;
@@ -103,5 +120,10 @@ public class PersonDto {
                 ", weight=" + weight +
                 ", emailAddress='" + emailAddress + '\'' +
                 '}';
+    }
+
+    @Override
+    public String getTypeIdentifier() {
+        return "person";
     }
 }

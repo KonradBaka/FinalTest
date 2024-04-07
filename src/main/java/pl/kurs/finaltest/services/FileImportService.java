@@ -4,9 +4,11 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import pl.kurs.finaltest.dto.PersonDto;
 import pl.kurs.finaltest.dto.TypeIdentifierDto;
 import pl.kurs.finaltest.exceptions.ImportInProgressException;
 import pl.kurs.finaltest.models.ImportStatus;
+import pl.kurs.finaltest.models.Person;
 import pl.kurs.finaltest.repositories.ImportSessionRepository;
 
 import java.time.LocalDateTime;
@@ -63,14 +65,20 @@ public class FileImportService implements IFileImportService {
 
     private void processFile(MultipartFile file, ImportStatus session) {
         try {
-            // przekazuje pojedynczo aby zapobiec out of memory error
+            // Optymalizacja przez pobieranie recodrów pojedynczo
             csvParserService.parseCsv(file.getInputStream(), record -> {
                 String type = record.get("TYPE");
                 if (type != null) {
                     TypeIdentifierDto typeIdentifierDto = new TypeIdentifierDto(type);
-                    PersonTypeStrategy strategy = strategyManager.getStrategy(typeIdentifierDto);
-                    strategy.importFromCsvRecord(record);
-                    session.incrementRecordsProcessed();
+                    PersonTypeStrategy<? extends Person, ? extends PersonDto> strategy = strategyManager.getStrategy(typeIdentifierDto);
+                    if (strategy != null) {
+                        strategy.importFromCsvRecord(record);
+                        synchronized (session) {
+                            session.incrementRecordsProcessed();
+                        }
+                    } else {
+                        throw new RuntimeException("Strategia nie znaleziona: " + type);
+                    }
                 } else {
                     throw new RuntimeException("Nie znaleziono typu");
                 }

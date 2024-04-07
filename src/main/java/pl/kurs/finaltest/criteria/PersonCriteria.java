@@ -3,28 +3,28 @@ package pl.kurs.finaltest.criteria;
 public class PersonCriteria {
 
     private String type;
-    private String name;
-    private String surname;
+    private String firstName;
+    private String lastName;
     private String pesel;
     private Double heightFrom;
     private Double heightTo;
     private Double weightFrom;
     private Double weightTo;
-    private String email;
+    private String emailAddress;
 
     public PersonCriteria() {
     }
 
     public String getType() {
-        return type;
+        return "person";
     }
 
-    public String getName() {
-        return name;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public String getSurname() {
-        return surname;
+    public String getLastName() {
+        return lastName;
     }
 
     public String getPesel() {
@@ -47,7 +47,7 @@ public class PersonCriteria {
         return weightTo;
     }
 
-    public String getEmail() {
-        return email;
+    public String getEmailAddress() {
+        return emailAddress;
     }
 }

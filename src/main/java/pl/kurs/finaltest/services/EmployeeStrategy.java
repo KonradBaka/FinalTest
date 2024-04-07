@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import pl.kurs.finaltest.dto.EmployeeDto;
 import pl.kurs.finaltest.dto.PersonDto;
 import pl.kurs.finaltest.models.Employee;
-import pl.kurs.finaltest.models.Person;
 import pl.kurs.finaltest.repositories.PersonRepository;
 
 import java.util.Map;
@@ -24,13 +23,13 @@ public class EmployeeStrategy implements PersonTypeStrategy<Employee, EmployeeDt
     }
 
     @Override
-    public Class<EmployeeDto> getHandledDtoClass() {
-        return EmployeeDto.class;
+    public String getHandledType() {
+        return "employee";
     }
 
     @Override
     public boolean supports(PersonDto personDto) {
-        return personDto instanceof EmployeeDto || "employee".equalsIgnoreCase(personDto.getType());
+        return "employee".equalsIgnoreCase(personDto.getType());
     }
 
     @Override
@@ -41,7 +40,7 @@ public class EmployeeStrategy implements PersonTypeStrategy<Employee, EmployeeDt
 
     @Override
     public Employee editPerson(Long id, EmployeeDto employeeDto) {
-        Employee employee = (Employee) personRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        Employee employee = (Employee) personRepository.findPersonByIdWithPessimisticLock(id).orElseThrow(EntityNotFoundException::new);
         modelMapper.map(employeeDto, employee);
         return personRepository.save(employee);
     }

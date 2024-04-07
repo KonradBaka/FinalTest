@@ -30,4 +30,9 @@ public class StudentCriteria extends PersonCriteria {
     public Double getScholarshipTo() {
         return scholarshipTo;
     }
+
+    @Override
+    public String getType() {
+        return "student";
+    }
 }
