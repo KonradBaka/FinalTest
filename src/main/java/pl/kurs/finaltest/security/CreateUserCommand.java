@@ -1,7 +1,6 @@
 package pl.kurs.finaltest.security;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 
 public class CreateUserCommand {
 

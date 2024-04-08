@@ -6,8 +6,6 @@ import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
-import pl.kurs.finaltest.criteria.PersonCriteria;
-import pl.kurs.finaltest.criteria.RetireeCriteria;
 import pl.kurs.finaltest.criteria.StudentCriteria;
 import pl.kurs.finaltest.models.Person;
 

@@ -8,12 +8,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import pl.kurs.finaltest.dto.ImportStatusDto;
 import pl.kurs.finaltest.dto.StatusDto;
+import pl.kurs.finaltest.exceptions.ImportInProgressException;
 import pl.kurs.finaltest.models.ImportStatus;
 import pl.kurs.finaltest.repositories.ImportSessionRepository;
 import pl.kurs.finaltest.services.FileImportService;
-
-import java.io.IOException;
-import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/api/import")
@@ -30,12 +28,17 @@ public class FileImporterController {
     }
 
     @PostMapping
-    public ResponseEntity<StatusDto> importCsv(@RequestParam("file") MultipartFile file) {
-        Long sessionId = fileImportService.importFile(file);
-        return ResponseEntity.ok(new StatusDto("Przetwarzanie pliku o ID: " + sessionId));
+    public ResponseEntity<Long> importCsv(@RequestParam("file") MultipartFile file) {
+        try {
+            Long sessionId = fileImportService.importFile(file);
+            return ResponseEntity.ok(sessionId);
+        } catch (ImportInProgressException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
-    // Po uruchomieniu importu dostaje info z ID dzięki któremu wyszukuje status.
 
     @GetMapping("/status/{sessionId}")
     public ResponseEntity<ImportStatusDto> getImportStatus(@PathVariable Long sessionId) {

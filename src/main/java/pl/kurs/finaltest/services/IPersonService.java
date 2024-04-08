@@ -2,10 +2,8 @@ package pl.kurs.finaltest.services;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import pl.kurs.finaltest.criteria.PersonCriteria;
 import pl.kurs.finaltest.dto.PersonDto;
-import pl.kurs.finaltest.models.Person;
 
 public interface IPersonService {
 

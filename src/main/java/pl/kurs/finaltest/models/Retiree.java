@@ -2,10 +2,7 @@ package pl.kurs.finaltest.models;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotNull;
-import org.springframework.stereotype.Component;
 
 import java.util.Objects;
 
