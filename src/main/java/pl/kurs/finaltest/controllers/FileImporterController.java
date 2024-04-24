@@ -1,17 +1,19 @@
 package pl.kurs.finaltest.controllers;
 
-import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import pl.kurs.finaltest.dto.ImportStatusDto;
-import pl.kurs.finaltest.dto.StatusDto;
-import pl.kurs.finaltest.exceptions.ImportInProgressException;
 import pl.kurs.finaltest.models.ImportStatus;
 import pl.kurs.finaltest.repositories.ImportSessionRepository;
 import pl.kurs.finaltest.services.FileImportService;
+
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/import")
@@ -27,25 +29,20 @@ public class FileImporterController {
         this.modelMapper = modelMapper;
     }
 
-    @PostMapping
-    public ResponseEntity<Long> importCsv(@RequestParam("file") MultipartFile file) {
-        try {
-            Long sessionId = fileImportService.importFile(file);
-            return ResponseEntity.ok(sessionId);
-        } catch (ImportInProgressException e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = "application/json")
+    public CompletableFuture<ResponseEntity<Long>> importCsv(@RequestParam("file") MultipartFile file) throws InterruptedException {
+        Long sessionId = fileImportService.createNewImportSession();
+        return fileImportService.importFile(sessionId, file)
+                .thenApply(sId -> ResponseEntity.ok(sId));
     }
 
-
-    @GetMapping("/status/{sessionId}")
-    public ResponseEntity<ImportStatusDto> getImportStatus(@PathVariable Long sessionId) {
-        ImportStatus session = importSessionRepository.findById(sessionId)
-                .orElseThrow(() -> new EntityNotFoundException("Nie znaleziono sesji o ID: " + sessionId));
-
-        ImportStatusDto dto = modelMapper.map(session, ImportStatusDto.class);
-        return ResponseEntity.ok(dto);
+    @GetMapping(produces = "application/json")
+    public ResponseEntity<List<ImportStatusDto>> getImportStatus() {
+            List<ImportStatus> sessions = importSessionRepository.findAll();
+            List<ImportStatusDto> dtos = sessions.stream()
+                    .map(session -> modelMapper.map(session, ImportStatusDto.class))
+                    .collect(Collectors.toList());
+            return ResponseEntity.ok(dtos);
     }
 }

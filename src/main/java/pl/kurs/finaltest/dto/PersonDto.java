@@ -34,6 +34,16 @@ public class PersonDto implements PersonMarker{
     public PersonDto() {
     }
 
+    public PersonDto(String type, String firstName, String lastName, String pesel, Double height, Double weight, String emailAddress) {
+        this.type = type;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.pesel = pesel;
+        this.height = height;
+        this.weight = weight;
+        this.emailAddress = emailAddress;
+    }
+
     public PersonDto(Long id, String type, String firstName, String lastName, String pesel, Double height, Double weight, String emailAddress) {
         this.id = id;
         this.type = type;
@@ -109,21 +119,8 @@ public class PersonDto implements PersonMarker{
         this.emailAddress = emailAddress;
     }
 
-    @Override
-    public String toString() {
-        return "PersonDto{" +
-                "type='" + type + '\'' +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", pesel='" + pesel + '\'' +
-                ", height=" + height +
-                ", weight=" + weight +
-                ", emailAddress='" + emailAddress + '\'' +
-                '}';
-    }
-
-    @Override
-    public String getTypeIdentifier() {
-        return "person";
-    }
+//    @Override
+//    public String getTypeIdentifier() {
+//        return "person";
+//    }
 }

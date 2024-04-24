@@ -2,6 +2,7 @@ package pl.kurs.finaltest.services;
 
 import org.springframework.stereotype.Service;
 import pl.kurs.finaltest.dto.PersonDto;
+import pl.kurs.finaltest.exceptions.InvalidInputData;
 import pl.kurs.finaltest.models.Person;
 
 import java.util.HashMap;
@@ -19,14 +20,13 @@ public class PersonStrategyManager {
         }
     }
 
-    public PersonTypeStrategy<? extends Person, ? extends PersonDto> getStrategy(PersonDto personDto) {
-        String type = personDto.getType();
+    public PersonTypeStrategy<? extends Person, ? extends PersonDto> getStrategy(String type) {
         if (type == null || type.isEmpty()) {
-            throw new IllegalArgumentException("Typ nie może być pusty");
+            throw new InvalidInputData("Typ nie może być pusty");
         }
         PersonTypeStrategy<? extends Person, ? extends PersonDto> strategy = strategyMap.get(type.toLowerCase());
         if (strategy == null) {
-            throw new IllegalArgumentException("Nie znaleziono strategi: " + type);
+            throw new InvalidInputData("Nie znaleziono strategii dla typu: " + type);
         }
         return strategy;
     }

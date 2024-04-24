@@ -3,9 +3,7 @@ package pl.kurs.finaltest.entityspecification;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
-import pl.kurs.finaltest.criteria.PersonCriteria;
 import pl.kurs.finaltest.criteria.PositionCriteria;
-import pl.kurs.finaltest.criteria.RetireeCriteria;
 import pl.kurs.finaltest.models.Person;
 
 import java.util.ArrayList;

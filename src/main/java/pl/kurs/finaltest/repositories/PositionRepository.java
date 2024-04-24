@@ -19,9 +19,9 @@ public interface PositionRepository extends JpaRepository<Position, Long> {
     @Query("SELECT COUNT(p) FROM Position p WHERE p.employee.id = :employeeId AND p.id <> :excludePositionId AND NOT(p.endDate < :startDate OR p.startDate > :endDate)")
     Long countOverlappingPositions(@Param("employeeId") Long employeeId, @Param("excludePositionId") Long excludePositionId, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Lock(LockModeType.OPTIMISTIC)
     @Query("SELECT p FROM Position p WHERE p.id = :id")
-     Optional<Position> findPositionByIdWithPessimisticLock(@Param("id") Long id);
+     Optional<Position> findPositionByIdWithOptimisticLock(@Param("id") Long id);
 
 
 }

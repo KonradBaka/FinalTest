@@ -3,6 +3,7 @@ package pl.kurs.finaltest.services;
 import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pl.kurs.finaltest.dto.PersonDto;
 import pl.kurs.finaltest.dto.StudentDto;
 import pl.kurs.finaltest.models.Student;
@@ -39,19 +40,21 @@ public class StudentStrategy implements PersonTypeStrategy<Student, StudentDto> 
 
     @Override
     public Student editPerson(Long id, StudentDto studentDto) {
-        Student student = (Student) personRepository.findPersonByIdWithPessimisticLock(id).orElseThrow(EntityNotFoundException::new);
+        Student student = (Student) personRepository.findPersonByIdWithOptymisticLock(id).orElseThrow(EntityNotFoundException::new);
         modelMapper.map(studentDto, student);
         return personRepository.save(student);
     }
 
     @Override
+    @Transactional
     public Student importFromCsvRecord(Map<String, String> csvRecord) {
         Student student = new Student();
 
-        student.setFirstName(csvRecord.get("name"));
-        student.setLastName(csvRecord.get("surname"));
-        student.setPesel(csvRecord.get("PESEL number"));
-        student.setEmailAddress(csvRecord.get("email address"));
+        student.setType(csvRecord.get("type"));
+        student.setFirstName(csvRecord.get("firstName"));
+        student.setLastName(csvRecord.get("lastName"));
+        student.setPesel(csvRecord.get("pesel"));
+        student.setEmailAddress(csvRecord.get("email"));
 
         if (csvRecord.get("height") != null) {
             student.setHeight(Double.valueOf(csvRecord.get("height")));

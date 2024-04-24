@@ -65,6 +65,16 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
     }
 
+    @ExceptionHandler({SessionNotFoundException.class})
+    public ResponseEntity<ExceptionsResponseDto> handleSessionNotFoundException(SessionNotFoundException e) {
+        ExceptionsResponseDto responseDto = new ExceptionsResponseDto(
+                List.of(e.getMessage()),
+                "NOT_FOUND",
+                Timestamp.from(Instant.now())
+        );
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseDto);
+    }
+
 
 
 

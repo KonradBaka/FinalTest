@@ -5,6 +5,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.kurs.finaltest.dto.PositionDto;
+import pl.kurs.finaltest.dto.SimplePositionDto;
+import pl.kurs.finaltest.exceptions.InvalidInputData;
 import pl.kurs.finaltest.models.Employee;
 import pl.kurs.finaltest.models.Position;
 import pl.kurs.finaltest.repositories.PersonRepository;
@@ -16,7 +18,7 @@ import java.util.List;
 import java.util.Set;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional
 public class PositionService implements IPositionService {
 
     private PositionRepository positionRepository;
@@ -30,12 +32,12 @@ public class PositionService implements IPositionService {
     }
 
     @Override
-    public Position addPosition(Long employeeId, PositionDto positionDto) {
+    public Position addPosition(Long employeeId, SimplePositionDto positionDto) {
         Employee employee = fetchEmployeeById(employeeId);
         Position newPosition = modelMapper.map(positionDto, Position.class);
 
         if (checkForOverlappingPositions(employee.getId(), null, newPosition.getStartDate(), newPosition.getEndDate()) > 0) {
-            throw new IllegalStateException("Daty stanowisk pokrywają się z istniejącymi stanowiskami.");
+            throw new InvalidInputData("Daty stanowisk pokrywają się z istniejącymi stanowiskami.");
         }
 
         newPosition.setEmployee(employee);
@@ -44,18 +46,23 @@ public class PositionService implements IPositionService {
 
     @Override
     public Position updatePosition(Long positionId, PositionDto positionDto) {
-        Position position = positionRepository.findPositionByIdWithPessimisticLock(positionId)
+        Position position = positionRepository.findPositionByIdWithOptimisticLock(positionId)
                 .orElseThrow(() -> new EntityNotFoundException("Pozycja nie znaleziona: " + positionId));
 
         if (checkForOverlappingPositions(position.getEmployee().getId(), positionId, positionDto.getStartDate(), positionDto.getEndDate()) > 0) {
             throw new IllegalStateException("Aktualizacja pozycji skutkuje nakładaniem się dat.");
         }
+
         modelMapper.map(positionDto, position);
+        position.setEmployee(personRepository.findEmployeeById(position.getEmployee().getId()).orElseThrow(
+                () -> new EntityNotFoundException("Nie znaleziono pracownika podczas edycji pozycji")
+        ));
         return positionRepository.save(position);
     }
 
     public Set<Position> findPositionsByEmployeeId(Long employeeId) {
         List<Position> positions = positionRepository.findByEmployeeId(employeeId);
+
         return new HashSet<>(positions);
     }
 
@@ -67,7 +74,5 @@ public class PositionService implements IPositionService {
         return personRepository.findEmployeeById(employeeId)
                 .orElseThrow(() -> new EntityNotFoundException("Nie znaleziono pracownika: " + employeeId));
     }
-
-
 }
 

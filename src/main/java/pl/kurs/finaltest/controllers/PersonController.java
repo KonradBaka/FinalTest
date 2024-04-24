@@ -1,9 +1,10 @@
 package pl.kurs.finaltest.controllers;
 
 
-import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,15 +17,15 @@ import pl.kurs.finaltest.services.PersonService;
 public class PersonController {
 
     private PersonService personService;
-    private ModelMapper modelMapper;
 
-    public PersonController(PersonService personService, ModelMapper modelMapper) {
+    public PersonController(PersonService personService) {
         this.personService = personService;
-        this.modelMapper = modelMapper;
     }
 
+
+
     @GetMapping
-    public ResponseEntity<Page<PersonDto>> searchPersons(@ModelAttribute PersonCriteria searchCriteria, Pageable pageable) {
+    public ResponseEntity<Page<?>> searchPersons(@ModelAttribute PersonCriteria searchCriteria, Pageable pageable) {
         Page<PersonDto> personDtos = personService.findPersons(searchCriteria, pageable);
         return ResponseEntity.ok(personDtos);
     }

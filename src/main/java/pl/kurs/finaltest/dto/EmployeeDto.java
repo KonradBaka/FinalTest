@@ -16,7 +16,16 @@ public class EmployeeDto extends PersonDto {
     private String currentPosition;
     @NotNull(message = "Aktualna pensja wymagana")
     private Double currentSalary;
+    @NotNull
+    private Integer numberOfPositions;
 
+    public Integer getNumberOfPositions() {
+        return numberOfPositions;
+    }
+
+    public void setNumberOfPositions(Integer numberOfPositions) {
+        this.numberOfPositions = numberOfPositions;
+    }
 
     public LocalDate getEmploymentStartDate() {
         return employmentStartDate;
@@ -42,17 +51,8 @@ public class EmployeeDto extends PersonDto {
         this.currentSalary = currentSalary;
     }
 
-    @Override
-    public String toString() {
-        return "EmployeeDto{" +
-                "employmentStartDate=" + employmentStartDate +
-                ", currentPosition='" + currentPosition + '\'' +
-                ", currentSalary=" + currentSalary +
-                '}';
-    }
-
-    @Override
-    public String getTypeIdentifier() {
-        return "employee";
-    }
+//    @Override
+//    public String getTypeIdentifier() {
+//        return "employee";
+//    }
 }

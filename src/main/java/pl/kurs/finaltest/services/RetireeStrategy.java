@@ -3,6 +3,7 @@ package pl.kurs.finaltest.services;
 import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pl.kurs.finaltest.dto.PersonDto;
 import pl.kurs.finaltest.dto.RetireeDto;
 import pl.kurs.finaltest.models.*;
@@ -40,19 +41,21 @@ public class RetireeStrategy implements PersonTypeStrategy<Retiree, RetireeDto> 
 
     @Override
     public Retiree editPerson(Long id, RetireeDto retireeDto) {
-        Retiree retiree = (Retiree) personRepository.findPersonByIdWithPessimisticLock(id).orElseThrow(EntityNotFoundException::new);
+        Retiree retiree = (Retiree) personRepository.findPersonByIdWithOptymisticLock(id).orElseThrow(EntityNotFoundException::new);
         modelMapper.map(retireeDto, retiree);
         return personRepository.save(retiree);
     }
 
     @Override
+    @Transactional
     public Retiree importFromCsvRecord(Map<String, String> csvRecord) {
         Retiree retiree = new Retiree();
 
-        retiree.setFirstName(csvRecord.get("name"));
-        retiree.setLastName(csvRecord.get("surname"));
-        retiree.setPesel(csvRecord.get("PESEL number"));
-        retiree.setEmailAddress(csvRecord.get("email address"));
+        retiree.setType(csvRecord.get("type"));
+        retiree.setFirstName(csvRecord.get("firstName"));
+        retiree.setLastName(csvRecord.get("lastName"));
+        retiree.setPesel(csvRecord.get("pesel"));
+        retiree.setEmailAddress(csvRecord.get("email"));
 
         if (csvRecord.get("height") != null) {
             retiree.setHeight(Double.valueOf(csvRecord.get("height")));

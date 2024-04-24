@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import pl.kurs.finaltest.criteria.PersonCriteria;
 import pl.kurs.finaltest.dto.PersonDto;
 import pl.kurs.finaltest.entityspecification.SpecificationManager;
+import pl.kurs.finaltest.exceptions.InvalidInputData;
 import pl.kurs.finaltest.models.Person;
 import pl.kurs.finaltest.repositories.PersonRepository;
 
@@ -31,10 +32,10 @@ public class PersonService implements IPersonService {
     @Override
     public <T extends PersonDto> T addPerson(T personDto) {
         @SuppressWarnings("unchecked")
-        PersonTypeStrategy<? extends Person, T> strategy = (PersonTypeStrategy<? extends Person, T>) strategyManager.getStrategy(personDto);
+        PersonTypeStrategy<? extends Person, T> strategy = (PersonTypeStrategy<? extends Person, T>) strategyManager.getStrategy(personDto.getType());
 
         if (strategy == null || !strategy.supports(personDto)) {
-            throw new IllegalArgumentException("Nie znaleziono strategii dla podanego typu: " + personDto.getType());
+            throw new InvalidInputData("Nie znaleziono strategii dla podanego typu: " + personDto.getType());
         }
 
         Person person = strategy.addPerson(personDto);
@@ -43,14 +44,14 @@ public class PersonService implements IPersonService {
 
     @Override
     public <T extends PersonDto> T editPerson(Long id, T personDto) {
-        PersonTypeStrategy<? extends Person, ? extends PersonDto> strategy = strategyManager.getStrategy(personDto);
+        PersonTypeStrategy<? extends Person, ? extends PersonDto> strategy = strategyManager.getStrategy(personDto.getType());
 
         if (strategy == null) {
-            throw new IllegalArgumentException("Nie znaleziono strategii dla podanego typu: " + personDto.getType());
+            throw new InvalidInputData("Nie znaleziono strategii dla podanego typu: " + personDto.getType());
         }
 
         if (!strategy.supports(personDto)) {
-            throw new IllegalArgumentException("Strategia nie obsługuje podanego typu DTO: " + personDto.getClass().getName());
+            throw new InvalidInputData("Strategia nie obsługuje podanego typu DTO: " + personDto.getClass().getName());
         }
 
         @SuppressWarnings("unchecked")

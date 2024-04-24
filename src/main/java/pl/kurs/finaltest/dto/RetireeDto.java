@@ -26,16 +26,9 @@ public class RetireeDto extends PersonDto{
         this.yearsWorked = yearsWorked;
     }
 
-    @Override
-    public String toString() {
-        return "RetireeDto{" +
-                "pensionAmount=" + pensionAmount +
-                ", yearsWorked=" + yearsWorked +
-                '}';
-    }
 
-    @Override
-    public String getTypeIdentifier() {
-        return "retiree";
-    }
+//    @Override
+//    public String getTypeIdentifier() {
+//        return "student";
+//    }
 }

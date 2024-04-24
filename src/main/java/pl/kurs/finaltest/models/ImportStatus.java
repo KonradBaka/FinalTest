@@ -31,8 +31,8 @@ public class ImportStatus implements Serializable {
         this.recordsProcessed = 0;
     }
 
-    public synchronized void incrementRecordsProcessed() {
-        this.recordsProcessed++;
+    public synchronized void incrementRecordsProcessed(int count) {
+        this.recordsProcessed = count;
     }
 
 

@@ -16,7 +16,7 @@ public class PersonCriteria {
     }
 
     public String getType() {
-        return "person";
+        return type;
     }
 
     public String getFirstName() {

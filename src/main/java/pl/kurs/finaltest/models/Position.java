@@ -13,7 +13,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "positions")
-public class Position extends Employee implements Serializable {
+public class Position implements Serializable{
     private static final long serialVersionUID = 1L;
 
     @Id

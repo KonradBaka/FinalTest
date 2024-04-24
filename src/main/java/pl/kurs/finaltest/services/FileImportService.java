@@ -1,106 +1,119 @@
 package pl.kurs.finaltest.services;
 
-import jakarta.persistence.EntityNotFoundException;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import pl.kurs.finaltest.dto.PersonDto;
-import pl.kurs.finaltest.dto.TypeIdentifierDto;
+import pl.kurs.finaltest.exceptions.FailedImportException;
 import pl.kurs.finaltest.exceptions.ImportInProgressException;
+import pl.kurs.finaltest.exceptions.InvalidInputData;
+import pl.kurs.finaltest.exceptions.SessionNotFoundException;
 import pl.kurs.finaltest.models.ImportStatus;
 import pl.kurs.finaltest.models.Person;
 import pl.kurs.finaltest.repositories.ImportSessionRepository;
 
-import java.io.IOException;
+import java.io.BufferedReader;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 public class FileImportService implements IFileImportService {
 
-
-    private CsvParserService csvParserService;
     private PersonStrategyManager strategyManager;
     private ImportSessionRepository importSessionRepository;
-    private DistributedLockManager lockManager; // stworzyłem nowy serwis który implementuje RedisTemplate. Czytałem że to jedna z lepszy metod obsługi locków
+    private LockManagerService lockManager;
 
-    public FileImportService(CsvParserService csvParserService, PersonStrategyManager strategyManager, ImportSessionRepository importSessionRepository, DistributedLockManager lockManager) {
-        this.csvParserService = csvParserService;
+
+    public FileImportService(PersonStrategyManager strategyManager, ImportSessionRepository importSessionRepository, LockManagerService lockManager) {
         this.strategyManager = strategyManager;
         this.importSessionRepository = importSessionRepository;
         this.lockManager = lockManager;
     }
 
-    public Long importFile(MultipartFile file) throws ImportInProgressException {
-        if (!lockManager.obtainLock()) { //Jezeli lock jest pusty to importFile jest lockowany
-            throw new ImportInProgressException("Trwa kolejny import.");
+//    @Async("fileImportTaskExecutor")
+    public CompletableFuture<Long> importFile(Long sessionId, MultipartFile file) throws InterruptedException {
+        if (!lockManager.acquireLock("import_process")) {
+            throw new ImportInProgressException("Obecnie trwa inny proces.");
         }
-
-        ImportStatus session = createNewImportSession();
-        processFile(file, session);
-        return session.getId();
-    }
-
-    @Async
-    public void processFile(MultipartFile file, ImportStatus session) {
-        try (InputStream inputStream = file.getInputStream()) {
-            processCsvRecords(inputStream, session);
-            updateSessionStatus(session.getId(), "COMPLETED");
-        } catch (Exception e) {
-            updateSessionStatus(session.getId(), "FAILED");
-            throw new RuntimeException("Nie udało się przetworzyć pliku", e);
+        try {
+            ImportStatus session = importSessionRepository.findById(sessionId)
+                    .orElseThrow(() -> new SessionNotFoundException("Nie znaleziono sesji: " + sessionId));
+            Thread.sleep(10000);
+            try (InputStream inputStream = file.getInputStream()) {
+                parseCsv(inputStream, session);
+                updateSessionStatus(session.getId(), "COMPLETED");
+                return CompletableFuture.completedFuture(sessionId);
+            } catch (Exception e) {
+                updateSessionStatus(session.getId(), "FAILED");
+                throw new InvalidInputData("Nie udało sie przetworzyć pliku", e);
+            }
         } finally {
-            lockManager.releaseLock(); // Asynchronicznie wykonuje sie przetwarzanie pliku i lock zostaje zwolniony po jej wykonaniu lub błędzie
+            lockManager.releaseLock("import_process");
         }
     }
 
-    @Transactional
-    protected void importRecord(Map<String, String> record, ImportStatus session) {
-        String type = record.get("TYPE");
-        if (type != null) {
-            PersonTypeStrategy<? extends Person, ? extends PersonDto> strategy = strategyManager.getStrategy(new TypeIdentifierDto(type));
+    private void parseCsv(InputStream inputStream, ImportStatus session) {
+        try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+             CSVParser csvParser = new CSVParser(fileReader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim())) {
+
+            List<CompletableFuture<Void>> futures = new ArrayList<>();
+            for (CSVRecord record : csvParser) {
+                CompletableFuture<Void> future = processRecordAsync(record.toMap());
+                futures.add(future);
+            }
+            CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
+            updateSessionProgress(session, futures.size());
+        } catch (Exception e) {
+            throw new FailedImportException("Nie udało sie przetworzyć pliku", e);
+        }
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void updateSessionProgress(ImportStatus session, int count) {
+        session.incrementRecordsProcessed(count);
+        importSessionRepository.save(session);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public CompletableFuture<Void> processRecordAsync(Map<String, String> record) {
+        return CompletableFuture.runAsync(() -> {
+            String type = record.get("type");
+            PersonTypeStrategy<? extends Person, ? extends PersonDto> strategy = strategyManager.getStrategy(type);
             if (strategy != null) {
                 strategy.importFromCsvRecord(record);
-                synchronized (session) {
-                    session.incrementRecordsProcessed();
-                }
             } else {
-                throw new RuntimeException("Nie znaleziono strategii dla typu: " + type);
+                throw new InvalidInputData("Nie znaleziono strategii: " + type);
             }
-        } else {
-            throw new RuntimeException("Brak typu rekordu");
-        }
+        });
     }
 
-
     @Transactional
-    public void updateSessionStatus(Long sessionId, String status) {
+    protected void updateSessionStatus(Long sessionId, String status) {
         ImportStatus session = importSessionRepository.findById(sessionId)
-                .orElseThrow(() -> new EntityNotFoundException("Nie znaleziono sesji: " + sessionId));
+                .orElseThrow(() -> new SessionNotFoundException("Nie znaleziono sesji: " + sessionId));
         session.setStatus(status);
         session.setEndTime(LocalDateTime.now());
         importSessionRepository.save(session);
     }
 
-
-    @Transactional
-    protected ImportStatus createNewImportSession() {
+    public Long createNewImportSession() {
         ImportStatus session = new ImportStatus();
         session.setStartTime(LocalDateTime.now());
         session.setStatus("IN_PROGRESS");
-        return importSessionRepository.save(session);
-    }
-
-    private void processCsvRecords(InputStream inputStream, ImportStatus session) {
-        csvParserService.parseCsv(inputStream, record -> {
-            try {
-                importRecord(record, session);
-            } catch (Exception e) {
-            }
-        });
+        return importSessionRepository.save(session).getId();
     }
 }
+
 
 

@@ -21,9 +21,10 @@ public class Employee extends Person {
     @Column(name = "ecurrent salary")
     private Double currentSalary;
 
-    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonManagedReference
     private Set<Position> positions = new HashSet<>();
+
 
     public Employee() {
     }

@@ -24,7 +24,7 @@ public abstract class Person implements Serializable {
     private Double height;
     @Column(name = "weight")
     private Double weight;
-    @Column(name = "email_adress")
+    @Column(name = "email_address")
     private String emailAddress;
 
 

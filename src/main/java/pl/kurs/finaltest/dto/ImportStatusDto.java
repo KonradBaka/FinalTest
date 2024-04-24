@@ -9,6 +9,7 @@ public class ImportStatusDto {
 
     @NotNull
     private Long id;
+    @NotBlank(message = "Data rozpoczęcia wymagana.")
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     @NotBlank(message = "Status wymagany.")
@@ -57,14 +58,5 @@ public class ImportStatusDto {
         this.recordsProcessed = recordsProcessed;
     }
 
-    @Override
-    public String toString() {
-        return "ImportStatusDto{" +
-                "id=" + id +
-                ", startTime=" + startTime +
-                ", endTime=" + endTime +
-                ", status='" + status + '\'' +
-                ", recordsProcessed=" + recordsProcessed +
-                '}';
-    }
+
 }

@@ -22,10 +22,12 @@ public interface PersonRepository extends JpaRepository<Person, Long>, JpaSpecif
     @Query("SELECT p FROM Person p WHERE TYPE(p) = Employee AND p.id = :id")
     Optional<Employee> findEmployeeById(@Param("id") Long id);
 
+    @Query("SELECT p FROM Person p WHERE TYPE(p) = Employee AND p.pesel = :pesel")
+    Optional<Employee> findEmployeeByPesel(@Param("pesel") String pesel);
 
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Lock(LockModeType.OPTIMISTIC)
     @Query("SELECT p FROM Person p WHERE p.id = :id")
-    <T extends Person> Optional<T> findPersonByIdWithPessimisticLock(@Param("id") Long id);
+    <T extends Person> Optional<T> findPersonByIdWithOptymisticLock(@Param("id") Long id);
 
 
 }
