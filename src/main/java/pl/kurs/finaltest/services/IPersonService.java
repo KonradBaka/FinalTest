@@ -9,5 +9,5 @@ public interface IPersonService {
 
     <T extends PersonDto> T addPerson(T personDto);
     <T extends PersonDto> T editPerson(Long id, T personDto);
-    <T extends PersonCriteria> Page<? extends PersonDto> findPersons(T criteria, Pageable pageable);
+    public <T extends PersonCriteria, U extends PersonDto> Page<U> findPersons(T criteria, Pageable pageable);
 }

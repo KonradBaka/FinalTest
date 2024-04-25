@@ -15,6 +15,34 @@ public class PositionCriteria extends EmployeeCriteria{
     public PositionCriteria() {
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setStartDateFrom(LocalDate startDateFrom) {
+        this.startDateFrom = startDateFrom;
+    }
+
+    public void setStartDateTo(LocalDate startDateTo) {
+        this.startDateTo = startDateTo;
+    }
+
+    public void setEndDateFrom(LocalDate endDateFrom) {
+        this.endDateFrom = endDateFrom;
+    }
+
+    public void setEndDateTo(LocalDate endDateTo) {
+        this.endDateTo = endDateTo;
+    }
+
+    public void setSalaryFrom(Double salaryFrom) {
+        this.salaryFrom = salaryFrom;
+    }
+
+    public void setSalaryTo(Double salaryTo) {
+        this.salaryTo = salaryTo;
+    }
+
     public String getName() {
         return name;
     }

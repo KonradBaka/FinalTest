@@ -49,7 +49,6 @@ public class FileImportService implements IFileImportService {
         try {
             ImportStatus session = importSessionRepository.findById(sessionId)
                     .orElseThrow(() -> new SessionNotFoundException("Nie znaleziono sesji: " + sessionId));
-            Thread.sleep(10000);
             try (InputStream inputStream = file.getInputStream()) {
                 parseCsv(inputStream, session);
                 updateSessionStatus(session.getId(), "COMPLETED");

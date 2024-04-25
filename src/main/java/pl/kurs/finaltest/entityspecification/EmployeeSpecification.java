@@ -20,6 +20,10 @@ public class EmployeeSpecification implements GenericSpecification<EmployeeCrite
         return (Root<Person> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
             List<Predicate> predicates = new ArrayList<>();
 
+
+            if (criteria.getType() != null) {
+                predicates.add(cb.like(cb.lower(root.get("type")), "%" + criteria.getType().toLowerCase() + "%"));
+            }
             if (criteria.getFirstName() != null) {
                 predicates.add(cb.like(cb.lower(root.get("firstName")), "%" + criteria.getFirstName().toLowerCase() + "%"));
             }
@@ -75,8 +79,8 @@ public class EmployeeSpecification implements GenericSpecification<EmployeeCrite
         return EmployeeCriteria.class;
     }
 
-    @Override
-    public String supports() {
-        return "employee";
-    }
+//    @Override
+//    public String supports() {
+//        return "employee";
+//    }
 }

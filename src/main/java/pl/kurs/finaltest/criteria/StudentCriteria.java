@@ -11,6 +11,26 @@ public class StudentCriteria extends PersonCriteria {
     public StudentCriteria() {
     }
 
+    public void setUniversityName(String universityName) {
+        this.universityName = universityName;
+    }
+
+    public void setYearOfStudy(Integer yearOfStudy) {
+        this.yearOfStudy = yearOfStudy;
+    }
+
+    public void setFieldOfStudy(String fieldOfStudy) {
+        this.fieldOfStudy = fieldOfStudy;
+    }
+
+    public void setScholarshipFrom(Double scholarshipFrom) {
+        this.scholarshipFrom = scholarshipFrom;
+    }
+
+    public void setScholarshipTo(Double scholarshipTo) {
+        this.scholarshipTo = scholarshipTo;
+    }
+
     public String getUniversityName() {
         return universityName;
     }

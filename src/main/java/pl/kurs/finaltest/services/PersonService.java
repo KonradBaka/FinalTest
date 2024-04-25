@@ -7,6 +7,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.kurs.finaltest.criteria.PersonCriteria;
+import pl.kurs.finaltest.dto.DtoManager;
 import pl.kurs.finaltest.dto.PersonDto;
 import pl.kurs.finaltest.entityspecification.SpecificationManager;
 import pl.kurs.finaltest.exceptions.InvalidInputData;
@@ -20,12 +21,14 @@ public class PersonService implements IPersonService {
     private final PersonRepository personRepository;
     private final PersonStrategyManager strategyManager;
     private final SpecificationManager specificationManager;
+    private final DtoManager dtoManager;
     private final ModelMapper modelMapper;
 
-    public PersonService(PersonRepository personRepository, PersonStrategyManager strategyManager, SpecificationManager specificationManager, ModelMapper modelMapper) {
+    public PersonService(PersonRepository personRepository, PersonStrategyManager strategyManager, SpecificationManager specificationManager, DtoManager dtoManager, ModelMapper modelMapper) {
         this.personRepository = personRepository;
         this.strategyManager = strategyManager;
         this.specificationManager = specificationManager;
+        this.dtoManager = dtoManager;
         this.modelMapper = modelMapper;
     }
 
@@ -60,11 +63,17 @@ public class PersonService implements IPersonService {
         return modelMapper.map(person, (Class<T>) personDto.getClass());
     }
 
-    @Override
-    public <T extends PersonCriteria> Page<PersonDto> findPersons(T criteria, Pageable pageable) {
+    public Page<PersonDto> findPersons(PersonCriteria criteria, Pageable pageable) {
         Specification<Person> spec = specificationManager.getSpecification(criteria);
         Page<Person> persons = personRepository.findAll(spec, pageable);
-        return persons.map(person -> modelMapper.map(person, PersonDto.class));
+        return persons.map(this::convertToDto);
     }
+
+    private PersonDto convertToDto(Person person) {
+        Class<? extends PersonDto> dtoClass = dtoManager.getDtoClass(person.getClass());
+        return modelMapper.map(person, dtoClass);
+    }
+
+
 }
 

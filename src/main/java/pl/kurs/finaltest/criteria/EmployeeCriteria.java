@@ -17,6 +17,26 @@ public class EmployeeCriteria extends PersonCriteria{
         return currentPosition;
     }
 
+    public void setCurrentPosition(String currentPosition) {
+        this.currentPosition = currentPosition;
+    }
+
+    public void setCurrentSalaryFrom(Double currentSalaryFrom) {
+        this.currentSalaryFrom = currentSalaryFrom;
+    }
+
+    public void setCurrentSalaryTo(Double currentSalaryTo) {
+        this.currentSalaryTo = currentSalaryTo;
+    }
+
+    public void setStartDateOfEmploymentFrom(LocalDate startDateOfEmploymentFrom) {
+        this.startDateOfEmploymentFrom = startDateOfEmploymentFrom;
+    }
+
+    public void setStartDateOfEmploymentTo(LocalDate startDateOfEmploymentTo) {
+        this.startDateOfEmploymentTo = startDateOfEmploymentTo;
+    }
+
     public Double getCurrentSalaryFrom() {
         return currentSalaryFrom;
     }

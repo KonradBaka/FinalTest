@@ -3,12 +3,11 @@ package pl.kurs.finaltest.controllers;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.kurs.finaltest.criteria.PersonCriteria;
+import pl.kurs.finaltest.dto.DtoManager;
 import pl.kurs.finaltest.dto.PersonDto;
 import pl.kurs.finaltest.services.PersonService;
 
@@ -17,18 +16,19 @@ import pl.kurs.finaltest.services.PersonService;
 public class PersonController {
 
     private PersonService personService;
+    private DtoManager dtoManager;
 
-    public PersonController(PersonService personService) {
+    public PersonController(PersonService personService, DtoManager dtoManager) {
         this.personService = personService;
+        this.dtoManager = dtoManager;
     }
-
-
 
     @GetMapping
     public ResponseEntity<Page<?>> searchPersons(@ModelAttribute PersonCriteria searchCriteria, Pageable pageable) {
         Page<PersonDto> personDtos = personService.findPersons(searchCriteria, pageable);
         return ResponseEntity.ok(personDtos);
     }
+
 
     @PostMapping
     public ResponseEntity<?> addPerson(@RequestBody PersonDto personDto) {

@@ -31,7 +31,7 @@ public class StudentSpecification implements GenericSpecification<StudentCriteri
                 predicates.add(cb.equal(root.get("pesel"), criteria.getPesel()));
             }
             if (criteria.getEmailAddress() != null) {
-                predicates.add(cb.like(cb.lower(root.get("email")), "%" + criteria.getEmailAddress().toLowerCase() + "%"));
+                predicates.add(cb.like(cb.lower(root.get("emailAddress")), "%" + criteria.getEmailAddress().toLowerCase() + "%"));
             }
             if (criteria.getHeightFrom() != null) {
                 predicates.add(cb.greaterThanOrEqualTo(root.get("height"), criteria.getHeightFrom()));
@@ -71,9 +71,9 @@ public class StudentSpecification implements GenericSpecification<StudentCriteri
         return StudentCriteria.class;
     }
 
-    @Override
-    public String supports() {
-        return "student";
-    }
+//    @Override
+//    public String supports() {
+//        return "student";
+//    }
 
 }

@@ -15,6 +15,42 @@ public class PersonCriteria {
     public PersonCriteria() {
     }
 
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public void setPesel(String pesel) {
+        this.pesel = pesel;
+    }
+
+    public void setHeightFrom(Double heightFrom) {
+        this.heightFrom = heightFrom;
+    }
+
+    public void setHeightTo(Double heightTo) {
+        this.heightTo = heightTo;
+    }
+
+    public void setWeightFrom(Double weightFrom) {
+        this.weightFrom = weightFrom;
+    }
+
+    public void setWeightTo(Double weightTo) {
+        this.weightTo = weightTo;
+    }
+
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
+    }
+
     public String getType() {
         return type;
     }

@@ -18,11 +18,9 @@ public class PositionSpecification implements GenericSpecification<PositionCrite
             List<Predicate> predicates = new ArrayList<>();
 
             if (criteria.getName() != null) {
-                predicates.add(cb.like(cb.lower(root.get("firstName")), "%" + criteria.getName().toLowerCase() + "%"));
+                predicates.add(cb.like(cb.lower(root.get("name")), "%" + criteria.getName().toLowerCase() + "%"));
             }
-            if (criteria.getStartDateFrom() != null) {
-                predicates.add(cb.greaterThanOrEqualTo(root.get("lastName"), criteria.getStartDateFrom()));
-            }
+
             if (criteria.getStartDateTo() != null) {
                 predicates.add(cb.lessThanOrEqualTo(root.get("startDate"), criteria.getStartDateTo()));
             }
@@ -48,9 +46,9 @@ public class PositionSpecification implements GenericSpecification<PositionCrite
         return PositionCriteria.class;
     }
 
-    @Override
-    public String supports() {
-        return "position";
-    }
+//    @Override
+//    public String supports() {
+//        return "position";
+//    }
 
 }

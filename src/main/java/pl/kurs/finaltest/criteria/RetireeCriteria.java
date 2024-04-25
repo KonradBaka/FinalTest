@@ -10,6 +10,22 @@ public class RetireeCriteria extends PersonCriteria{
     public RetireeCriteria() {
     }
 
+    public void setPensionAmountFrom(Double pensionAmountFrom) {
+        this.pensionAmountFrom = pensionAmountFrom;
+    }
+
+    public void setPensionAmountTo(Double pensionAmountTo) {
+        this.pensionAmountTo = pensionAmountTo;
+    }
+
+    public void setYearsWorkedFrom(Integer yearsWorkedFrom) {
+        this.yearsWorkedFrom = yearsWorkedFrom;
+    }
+
+    public void setYearsWorkedTo(Integer yearsWorkedTo) {
+        this.yearsWorkedTo = yearsWorkedTo;
+    }
+
     public Double getPensionAmountFrom() {
         return pensionAmountFrom;
     }
