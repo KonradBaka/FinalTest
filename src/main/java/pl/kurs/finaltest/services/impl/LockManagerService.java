@@ -1,9 +1,9 @@
-package pl.kurs.finaltest.services;
+package pl.kurs.finaltest.services.impl;
 
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
-import pl.kurs.finaltest.models.ImportLock;
-import pl.kurs.finaltest.repositories.LockManagerRepository;
+import pl.kurs.finaltest.database.entity.ImportLock;
+import pl.kurs.finaltest.database.repositories.LockManagerRepository;
 
 import java.time.LocalDateTime;
 

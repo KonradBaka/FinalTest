@@ -2,14 +2,7 @@ package pl.kurs.finaltest.dto;
 
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
-import pl.kurs.finaltest.criteria.EmployeeCriteria;
-import pl.kurs.finaltest.criteria.PersonCriteria;
-import pl.kurs.finaltest.criteria.RetireeCriteria;
-import pl.kurs.finaltest.criteria.StudentCriteria;
-import pl.kurs.finaltest.models.Employee;
-import pl.kurs.finaltest.models.Person;
-import pl.kurs.finaltest.models.Retiree;
-import pl.kurs.finaltest.models.Student;
+import pl.kurs.finaltest.database.entity.*;
 
 import java.util.HashMap;
 import java.util.Map;

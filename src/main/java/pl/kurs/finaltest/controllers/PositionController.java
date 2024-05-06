@@ -6,10 +6,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.kurs.finaltest.dto.PositionDto;
 import pl.kurs.finaltest.dto.SimplePositionDto;
-import pl.kurs.finaltest.models.Position;
-import pl.kurs.finaltest.services.PositionService;
+import pl.kurs.finaltest.database.entity.Position;
+import pl.kurs.finaltest.services.impl.PositionService;
 
-import javax.xml.crypto.dsig.SignatureMethod;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;

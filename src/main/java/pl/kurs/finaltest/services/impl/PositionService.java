@@ -1,4 +1,4 @@
-package pl.kurs.finaltest.services;
+package pl.kurs.finaltest.services.impl;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
@@ -7,10 +7,11 @@ import org.springframework.transaction.annotation.Transactional;
 import pl.kurs.finaltest.dto.PositionDto;
 import pl.kurs.finaltest.dto.SimplePositionDto;
 import pl.kurs.finaltest.exceptions.InvalidInputData;
-import pl.kurs.finaltest.models.Employee;
-import pl.kurs.finaltest.models.Position;
-import pl.kurs.finaltest.repositories.PersonRepository;
-import pl.kurs.finaltest.repositories.PositionRepository;
+import pl.kurs.finaltest.database.entity.Employee;
+import pl.kurs.finaltest.database.entity.Position;
+import pl.kurs.finaltest.database.repositories.PersonRepository;
+import pl.kurs.finaltest.database.repositories.PositionRepository;
+import pl.kurs.finaltest.services.IPositionService;
 
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -23,11 +24,13 @@ public class PositionService implements IPositionService {
 
     private PositionRepository positionRepository;
     private PersonRepository personRepository;
+    private PersonService personService;
     private ModelMapper modelMapper;
 
-    public PositionService(PositionRepository positionRepository, PersonRepository personRepository, ModelMapper modelMapper) {
+    public PositionService(PositionRepository positionRepository, PersonRepository personRepository, PersonService personService, ModelMapper modelMapper) {
         this.positionRepository = positionRepository;
         this.personRepository = personRepository;
+        this.personService = personService;
         this.modelMapper = modelMapper;
     }
 
@@ -41,7 +44,9 @@ public class PositionService implements IPositionService {
         }
 
         newPosition.setEmployee(employee);
-        return positionRepository.save(newPosition);
+        Position savedPosition = positionRepository.save(newPosition);
+        personService.updateEmployeeDtoPositions(employee, personService.getEmployee(employeeId));
+        return savedPosition;
     }
 
     @Override
@@ -57,7 +62,9 @@ public class PositionService implements IPositionService {
         position.setEmployee(personRepository.findEmployeeById(position.getEmployee().getId()).orElseThrow(
                 () -> new EntityNotFoundException("Nie znaleziono pracownika podczas edycji pozycji")
         ));
-        return positionRepository.save(position);
+        Position updatedPosition = positionRepository.save(position);
+        personService.updateEmployeeDtoPositions(position.getEmployee(), personService.getEmployee(position.getEmployee().getId()));
+        return updatedPosition;
     }
 
     public Set<Position> findPositionsByEmployeeId(Long employeeId) {

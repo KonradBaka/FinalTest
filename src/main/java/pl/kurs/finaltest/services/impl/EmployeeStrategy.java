@@ -1,4 +1,4 @@
-package pl.kurs.finaltest.services;
+package pl.kurs.finaltest.services.impl;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
@@ -6,10 +6,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.kurs.finaltest.dto.EmployeeDto;
 import pl.kurs.finaltest.dto.PersonDto;
-import pl.kurs.finaltest.models.Employee;
-import pl.kurs.finaltest.models.Position;
-import pl.kurs.finaltest.repositories.PersonRepository;
-import pl.kurs.finaltest.repositories.PositionRepository;
+import pl.kurs.finaltest.database.entity.Employee;
+import pl.kurs.finaltest.database.entity.Position;
+import pl.kurs.finaltest.database.repositories.PersonRepository;
+import pl.kurs.finaltest.database.repositories.PositionRepository;
+import pl.kurs.finaltest.services.PersonTypeStrategy;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -94,55 +95,4 @@ public class EmployeeStrategy implements PersonTypeStrategy<Employee, EmployeeDt
 
         return employee;
     }
-
-//    @Override
-//    @Transactional
-//    public Employee importFromCsvRecord(Map<String, String> csvRecord) {
-//
-//
-//        Employee employee = new Employee();
-//
-//        employee.setType(csvRecord.get("type"));
-//        employee.setFirstName(csvRecord.get("firstName"));
-//        employee.setLastName(csvRecord.get("lastName"));
-//        employee.setPesel(csvRecord.get("pesel"));
-//        employee.setEmailAddress(csvRecord.get("email"));
-//
-//        if (csvRecord.get("height") != null) {
-//            employee.setHeight(Double.valueOf(csvRecord.get("height")));
-//        }
-//        if (csvRecord.get("weight") != null) {
-//            employee.setWeight(Double.valueOf(csvRecord.get("weight")));
-//        }
-//
-//        if (csvRecord.get("employmentStartDate") != null) {
-//            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-//            LocalDate startDate = LocalDate.parse(csvRecord.get("employmentStartDate"), formatter);
-//            employee.setEmploymentStartDate(startDate);
-//        }
-//
-//        if (csvRecord.get("currentSalary") != null) {
-//            employee.setCurrentSalary(Double.valueOf(csvRecord.get("currentSalary")));
-//        }
-//
-//        employee = personRepository.save(employee);
-//
-//        if (csvRecord.get("currentPosition") != null && csvRecord.get("currentSalary") != null) {
-//            Position position = new Position();
-//            position.setEmployee(employee);
-//            position.setName(csvRecord.get("currentPosition"));
-//            position.setStartDate(employee.getEmploymentStartDate());
-//            position.setSalary(Double.valueOf(csvRecord.get("currentSalary")));
-//
-//            if (employee.getPositions() == null) {
-//                employee.setPositions(new HashSet<>());
-//            }
-//            employee.getPositions().add(position);
-//            employee.setCurrentPosition(position.getName());
-//
-//            positionRepository.save(position);
-//        }
-//
-//        return employee;
-//    }
 }

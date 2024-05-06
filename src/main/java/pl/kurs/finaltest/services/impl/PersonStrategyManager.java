@@ -1,9 +1,10 @@
-package pl.kurs.finaltest.services;
+package pl.kurs.finaltest.services.impl;
 
 import org.springframework.stereotype.Service;
 import pl.kurs.finaltest.dto.PersonDto;
 import pl.kurs.finaltest.exceptions.InvalidInputData;
-import pl.kurs.finaltest.models.Person;
+import pl.kurs.finaltest.database.entity.Person;
+import pl.kurs.finaltest.services.PersonTypeStrategy;
 
 import java.util.HashMap;
 import java.util.List;

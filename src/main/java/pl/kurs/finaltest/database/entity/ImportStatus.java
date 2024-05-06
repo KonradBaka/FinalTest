@@ -1,4 +1,4 @@
-package pl.kurs.finaltest.models;
+package pl.kurs.finaltest.database.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -28,10 +28,10 @@ public class ImportStatus implements Serializable {
         this.startTime = startTime;
         this.endTime = endTime;
         this.status = status;
-        this.recordsProcessed = 0;
+        this.recordsProcessed = recordsProcessed;
     }
 
-    public synchronized void incrementRecordsProcessed(int count) {
+    public void incrementRecordsProcessed(long count) {
         this.recordsProcessed = count;
     }
 

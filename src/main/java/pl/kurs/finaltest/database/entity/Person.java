@@ -1,4 +1,4 @@
-package pl.kurs.finaltest.models;
+package pl.kurs.finaltest.database.entity;
 
 import jakarta.persistence.*;
 

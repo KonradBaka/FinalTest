@@ -1,22 +1,7 @@
 package pl.kurs.finaltest.services;
 
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.web.multipart.MultipartFile;
-import pl.kurs.finaltest.repositories.PersonRepository;
-
-import static org.mockito.Mockito.*;
-
-import java.io.InputStream;
-import java.util.List;
-import java.util.Map;
-
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class FileImportServiceTest {

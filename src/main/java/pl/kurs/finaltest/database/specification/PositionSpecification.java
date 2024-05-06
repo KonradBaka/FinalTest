@@ -1,10 +1,10 @@
-package pl.kurs.finaltest.entityspecification;
+package pl.kurs.finaltest.database.specification;
 
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 import pl.kurs.finaltest.criteria.PositionCriteria;
-import pl.kurs.finaltest.models.Person;
+import pl.kurs.finaltest.database.entity.Person;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,10 +45,5 @@ public class PositionSpecification implements GenericSpecification<PositionCrite
     public Class<PositionCriteria> getCriteriaClass() {
         return PositionCriteria.class;
     }
-
-//    @Override
-//    public String supports() {
-//        return "position";
-//    }
 
 }

@@ -1,4 +1,4 @@
-package pl.kurs.finaltest.entityspecification;
+package pl.kurs.finaltest.database.specification;
 
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -6,19 +6,20 @@ import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
-import pl.kurs.finaltest.criteria.RetireeCriteria;
-import pl.kurs.finaltest.models.Person;
+import pl.kurs.finaltest.criteria.EmployeeCriteria;
+import pl.kurs.finaltest.database.entity.Person;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class RetireeSpecification implements GenericSpecification<RetireeCriteria> {
+public class EmployeeSpecification implements GenericSpecification<EmployeeCriteria> {
 
     @Override
-    public Specification<Person> toSpecification(RetireeCriteria criteria) {
+    public Specification<Person> toSpecification(EmployeeCriteria criteria) {
         return (Root<Person> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
             List<Predicate> predicates = new ArrayList<>();
+
 
             if (criteria.getType() != null) {
                 predicates.add(cb.like(cb.lower(root.get("type")), "%" + criteria.getType().toLowerCase() + "%"));
@@ -49,20 +50,20 @@ public class RetireeSpecification implements GenericSpecification<RetireeCriteri
             }
 
 
-            if (criteria.getPensionAmountFrom() != null) {
-                predicates.add(cb.greaterThanOrEqualTo(root.get("pensionAmount"), criteria.getPensionAmountFrom()));
+            if (criteria.getStartDateOfEmploymentFrom() != null) {
+                predicates.add(cb.greaterThanOrEqualTo(root.get("startDateOfEmployment"), criteria.getStartDateOfEmploymentFrom()));
             }
-
-            if (criteria.getPensionAmountTo() != null) {
-                predicates.add(cb.lessThanOrEqualTo(root.get("pensionAmount"), criteria.getPensionAmountTo()));
+            if (criteria.getStartDateOfEmploymentTo() != null) {
+                predicates.add(cb.lessThanOrEqualTo(root.get("startDateOfEmployment"), criteria.getStartDateOfEmploymentTo()));
             }
-
-            if (criteria.getYearsWorkedFrom() != null) {
-                predicates.add(cb.greaterThanOrEqualTo(root.get("yearsWorked"), criteria.getYearsWorkedFrom()));
+            if (criteria.getCurrentPosition() != null) {
+                predicates.add(cb.like(cb.lower(root.get("currentPosition")), "%" + criteria.getCurrentPosition().toLowerCase() + "%"));
             }
-
-            if (criteria.getYearsWorkedTo() != null) {
-                predicates.add(cb.lessThanOrEqualTo(root.get("yearsWorked"), criteria.getYearsWorkedTo()));
+            if (criteria.getCurrentSalaryFrom() != null) {
+                predicates.add(cb.greaterThanOrEqualTo(root.get("currentSalary"), criteria.getCurrentSalaryFrom()));
+            }
+            if (criteria.getCurrentSalaryTo() != null) {
+                predicates.add(cb.lessThanOrEqualTo(root.get("currentSalary"), criteria.getCurrentSalaryTo()));
             }
 
             return cb.and(predicates.toArray(new Predicate[0]));
@@ -70,12 +71,12 @@ public class RetireeSpecification implements GenericSpecification<RetireeCriteri
     }
 
     @Override
-    public Class<RetireeCriteria> getCriteriaClass() {
-        return RetireeCriteria.class;
+    public Class<EmployeeCriteria> getCriteriaClass() {
+        return EmployeeCriteria.class;
     }
 
 //    @Override
 //    public String supports() {
-//        return "retiree";
+//        return "employee";
 //    }
 }

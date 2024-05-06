@@ -1,4 +1,4 @@
-package pl.kurs.finaltest.services;
+package pl.kurs.finaltest.services.impl;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
@@ -6,8 +6,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.kurs.finaltest.dto.PersonDto;
 import pl.kurs.finaltest.dto.StudentDto;
-import pl.kurs.finaltest.models.Student;
-import pl.kurs.finaltest.repositories.PersonRepository;
+import pl.kurs.finaltest.database.entity.Student;
+import pl.kurs.finaltest.database.repositories.PersonRepository;
+import pl.kurs.finaltest.services.PersonTypeStrategy;
 
 import java.util.Map;
 

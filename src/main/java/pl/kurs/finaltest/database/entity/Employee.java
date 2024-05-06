@@ -1,4 +1,4 @@
-package pl.kurs.finaltest.models;
+package pl.kurs.finaltest.database.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;

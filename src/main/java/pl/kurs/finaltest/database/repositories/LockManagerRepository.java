@@ -1,4 +1,4 @@
-package pl.kurs.finaltest.repositories;
+package pl.kurs.finaltest.database.repositories;
 
 import jakarta.persistence.LockModeType;
 import jakarta.transaction.Transactional;
@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import pl.kurs.finaltest.models.ImportLock;
+import pl.kurs.finaltest.database.entity.ImportLock;
 
 public interface LockManagerRepository extends JpaRepository<ImportLock, String> {
 

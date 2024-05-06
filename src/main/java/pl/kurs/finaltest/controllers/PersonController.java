@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import pl.kurs.finaltest.criteria.PersonCriteria;
 import pl.kurs.finaltest.dto.DtoManager;
 import pl.kurs.finaltest.dto.PersonDto;
-import pl.kurs.finaltest.services.PersonService;
+import pl.kurs.finaltest.services.impl.PersonService;
 
 @RestController
 @RequestMapping("/api/people")

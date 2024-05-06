@@ -7,9 +7,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import pl.kurs.finaltest.dto.ImportStatusDto;
-import pl.kurs.finaltest.models.ImportStatus;
-import pl.kurs.finaltest.repositories.ImportSessionRepository;
-import pl.kurs.finaltest.services.FileImportService;
+import pl.kurs.finaltest.database.entity.ImportStatus;
+import pl.kurs.finaltest.database.repositories.ImportSessionRepository;
+import pl.kurs.finaltest.services.impl.FileImportService;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -36,6 +36,7 @@ public class FileImporterController {
         return fileImportService.importFile(sessionId, file)
                 .thenApply(sId -> ResponseEntity.ok(sId));
     }
+
 
     @GetMapping(produces = "application/json")
     public ResponseEntity<List<ImportStatusDto>> getImportStatus() {

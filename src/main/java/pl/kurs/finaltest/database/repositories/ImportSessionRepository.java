@@ -1,7 +1,7 @@
-package pl.kurs.finaltest.repositories;
+package pl.kurs.finaltest.database.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import pl.kurs.finaltest.models.ImportStatus;
+import pl.kurs.finaltest.database.entity.ImportStatus;
 
 public interface ImportSessionRepository extends JpaRepository<ImportStatus, Long> {
 }

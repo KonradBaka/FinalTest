@@ -1,4 +1,4 @@
-package pl.kurs.finaltest.repositories;
+package pl.kurs.finaltest.database.repositories;
 
 import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -7,8 +7,8 @@ import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import pl.kurs.finaltest.models.Employee;
-import pl.kurs.finaltest.models.Person;
+import pl.kurs.finaltest.database.entity.Employee;
+import pl.kurs.finaltest.database.entity.Person;
 
 import java.util.Optional;
 

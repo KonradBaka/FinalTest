@@ -1,4 +1,4 @@
-package pl.kurs.finaltest.entityspecification;
+package pl.kurs.finaltest.database.specification;
 
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -7,7 +7,7 @@ import jakarta.persistence.criteria.Root;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 import pl.kurs.finaltest.criteria.StudentCriteria;
-import pl.kurs.finaltest.models.Person;
+import pl.kurs.finaltest.database.entity.Person;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +21,9 @@ public class StudentSpecification implements GenericSpecification<StudentCriteri
         return (Root<Person> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
             List<Predicate> predicates = new ArrayList<>();
 
+            if (criteria.getType() != null) {
+                predicates.add(cb.like(cb.lower(root.get("type")), "%" + criteria.getType().toLowerCase() + "%"));
+            }
             if (criteria.getFirstName() != null) {
                 predicates.add(cb.like(cb.lower(root.get("firstName")), "%" + criteria.getFirstName().toLowerCase() + "%"));
             }
@@ -71,9 +74,5 @@ public class StudentSpecification implements GenericSpecification<StudentCriteri
         return StudentCriteria.class;
     }
 
-//    @Override
-//    public String supports() {
-//        return "student";
-//    }
 
 }

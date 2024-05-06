@@ -1,7 +1,7 @@
 package pl.kurs.finaltest.services;
 
 import pl.kurs.finaltest.dto.PersonDto;
-import pl.kurs.finaltest.models.Person;
+import pl.kurs.finaltest.database.entity.Person;
 
 import java.util.Map;
 
