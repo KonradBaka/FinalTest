@@ -51,8 +51,5 @@ public class EmployeeDto extends PersonDto {
         this.currentSalary = currentSalary;
     }
 
-//    @Override
-//    public String getTypeIdentifier() {
-//        return "employee";
-//    }
+
 }

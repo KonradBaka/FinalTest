@@ -14,9 +14,8 @@ import java.util.Map;
 @Component
 public class SpecificationManager {
 
-    private Map<Class<? extends PersonCriteria>, GenericSpecification<?>> specificationMap = new HashMap<>();
+    private final Map<Class<? extends PersonCriteria>, GenericSpecification<?>> specificationMap = new HashMap<>();
 
-    @Autowired
     public SpecificationManager(List<GenericSpecification<?>> specifications) {
         for (GenericSpecification<?> spec : specifications) {
             specificationMap.put(spec.getCriteriaClass(), spec);
@@ -24,10 +23,12 @@ public class SpecificationManager {
     }
 
     public <T extends PersonCriteria> Specification<Person> getSpecification(T criteria) {
-        GenericSpecification<T> specification = (GenericSpecification<T>) specificationMap.get(criteria.getClass());
-        if (specification == null) {
-            throw new InvalidInputData("Nie znaleziono specyfikacji dla typu: " + criteria.getClass().getSimpleName());
+        GenericSpecification<?> genericSpec = specificationMap.get(criteria.getClass());
+        if (genericSpec != null) {
+            @SuppressWarnings("unchecked")
+            GenericSpecification<T> spec = (GenericSpecification<T>) genericSpec;
+            return spec.toSpecification(criteria);
         }
-        return specification.toSpecification(criteria);
+        return (root, query, cb) -> cb.conjunction();
     }
 }

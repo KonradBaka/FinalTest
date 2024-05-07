@@ -1,10 +1,14 @@
 package pl.kurs.finaltest.database.specification;
 
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 import pl.kurs.finaltest.criteria.PositionCriteria;
+import pl.kurs.finaltest.database.entity.Employee;
 import pl.kurs.finaltest.database.entity.Person;
+import pl.kurs.finaltest.database.entity.Position;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +20,9 @@ public class PositionSpecification implements GenericSpecification<PositionCrite
     public Specification<Person> toSpecification(PositionCriteria criteria) {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
+
+            Join<Employee, Position> positions = root.join("positions", JoinType.INNER);
+
 
             if (criteria.getName() != null) {
                 predicates.add(cb.like(cb.lower(root.get("name")), "%" + criteria.getName().toLowerCase() + "%"));

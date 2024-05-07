@@ -1,21 +1,21 @@
 package pl.kurs.finaltest.services.impl;
 
+import jakarta.transaction.Transactional;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import pl.kurs.finaltest.database.entity.ImportStatus;
+import pl.kurs.finaltest.database.entity.Person;
+import pl.kurs.finaltest.database.repositories.ImportSessionRepository;
+import pl.kurs.finaltest.database.repositories.PersonRepository;
 import pl.kurs.finaltest.dto.PersonDto;
 import pl.kurs.finaltest.exceptions.FailedImportException;
 import pl.kurs.finaltest.exceptions.ImportInProgressException;
 import pl.kurs.finaltest.exceptions.InvalidInputData;
 import pl.kurs.finaltest.exceptions.SessionNotFoundException;
-import pl.kurs.finaltest.database.entity.ImportStatus;
-import pl.kurs.finaltest.database.entity.Person;
-import pl.kurs.finaltest.database.repositories.ImportSessionRepository;
 import pl.kurs.finaltest.services.IFileImportService;
 import pl.kurs.finaltest.services.PersonTypeStrategy;
 
@@ -28,80 +28,80 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 
 @Service
 public class FileImportService implements IFileImportService {
 
     private PersonStrategyManager strategyManager;
+    private PersonRepository personRepository;
     private ImportSessionRepository importSessionRepository;
     private LockManagerService lockManager;
+    private Executor executor;
 
 
-    public FileImportService(PersonStrategyManager strategyManager, ImportSessionRepository importSessionRepository, LockManagerService lockManager) {
+    public FileImportService(PersonStrategyManager strategyManager, PersonRepository personRepository, ImportSessionRepository importSessionRepository, LockManagerService lockManager, Executor executor) {
         this.strategyManager = strategyManager;
+        this.personRepository = personRepository;
         this.importSessionRepository = importSessionRepository;
         this.lockManager = lockManager;
+        this.executor = executor;
     }
 
-
-    @Async
-    @Transactional
-    public CompletableFuture<Long> importFile(Long sessionId, MultipartFile file) throws InterruptedException {
+    public CompletableFuture<Long> importFile(Long sessionId, MultipartFile file) {
         if (!lockManager.acquireLock("import_process")) {
             CompletableFuture<Long> failedFuture = new CompletableFuture<>();
             failedFuture.completeExceptionally(new ImportInProgressException("Obecnie trwa inny proces."));
             return failedFuture;
         }
+
         try {
             ImportStatus session = importSessionRepository.findById(sessionId)
                     .orElseThrow(() -> new SessionNotFoundException("Nie znaleziono sesji: " + sessionId));
-            try (InputStream inputStream = file.getInputStream()) {
-                parseCsv(inputStream, session);
-                updateSessionStatus(sessionId, "COMPLETED");
-            } catch (Exception e) {
-                updateSessionStatus(sessionId, "FAILED");
-                throw new RuntimeException("Nie udało się przetworzyć pliku", e);
-            }
-            return CompletableFuture.completedFuture(sessionId);
-        } finally {
+
+            return CompletableFuture.supplyAsync(() -> {
+                try {
+                    parseCsv(file.getInputStream(), session);
+                } catch (Exception e) {
+                    updateSessionStatus(sessionId, "FAILED");
+                    throw new RuntimeException("Nie udało się przetworzyć pliku", e);
+                } finally {
+                    lockManager.releaseLock("import_process");
+                }
+                return sessionId;
+            }, executor);
+        } catch (Exception e) {
             lockManager.releaseLock("import_process");
+            throw e;
         }
     }
 
-    private void parseCsv(InputStream inputStream, ImportStatus session) {
+    @Transactional
+    protected void parseCsv(InputStream inputStream, ImportStatus session) {
         try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
              CSVParser csvParser = new CSVParser(fileReader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim())) {
 
-            List<CompletableFuture<Void>> futures = new ArrayList<>();
+            List<Person> persons = new ArrayList<>();
             for (CSVRecord record : csvParser) {
-                CompletableFuture<Void> future = processRecordAsync(record.toMap());
-                futures.add(future);
+                Map<String, String> recordMap = record.toMap();
+                PersonTypeStrategy<? extends Person, ? extends PersonDto> strategy = strategyManager.getStrategy(record.get("type"));
+                Person person = strategy.importFromCsvRecord(recordMap);
+                persons.add(person);
             }
-            CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
+            personRepository.saveAll(persons);
             updateSessionProgress(session, csvParser.getRecordNumber());
+            updateSessionStatus(session.getId(), "COMPLETED");
         } catch (Exception e) {
-            throw new FailedImportException("Nie udało się sparsować obiektów z pliku csv", e);
+            throw new RuntimeException("Failed to parse CSV records: " + e.getMessage(), e);
         }
     }
 
-    public CompletableFuture<Void> processRecordAsync(Map<String, String> record) {
-        return CompletableFuture.runAsync(() -> {
-            String type = record.get("type");
-            PersonTypeStrategy<? extends Person, ? extends PersonDto> strategy = strategyManager.getStrategy(type);
-            if (strategy != null) {
-                strategy.importFromCsvRecord(record);
-            } else {
-                throw new InvalidInputData("Nie znaleziono strategii: " + type);
-            }
-        });
-    }
-
-    public void updateSessionProgress(ImportStatus session, long count) {
+    private void updateSessionProgress(ImportStatus session, long count) {
         session.incrementRecordsProcessed(count);
         importSessionRepository.save(session);
     }
 
-    public void updateSessionStatus(Long sessionId, String status) {
+    private void updateSessionStatus(Long sessionId, String status) {
         ImportStatus session = importSessionRepository.findById(sessionId)
                 .orElseThrow(() -> new SessionNotFoundException("Nie znaleziono sesji: " + sessionId));
         session.setStatus(status);
@@ -109,41 +109,31 @@ public class FileImportService implements IFileImportService {
         importSessionRepository.save(session);
     }
 
-    public Long createNewImportSession() {
-        ImportStatus session = new ImportStatus();
-        session.setStartTime(LocalDateTime.now());
-        session.setStatus("IN_PROGRESS");
-        importSessionRepository.save(session);
-        return session.getId();
-    }
-}
-
-
-//////////////////// wersja 1
-
-
 //    @Async
 //    public CompletableFuture<Long> importFile(Long sessionId, MultipartFile file) throws InterruptedException {
 //        if (!lockManager.acquireLock("import_process")) {
-//            throw new ImportInProgressException("Obecnie trwa inny proces.");
+//            CompletableFuture<Long> failedFuture = new CompletableFuture<>();
+//            failedFuture.completeExceptionally(new ImportInProgressException("Obecnie trwa inny proces."));
+//            return failedFuture;
 //        }
 //        try {
 //            ImportStatus session = importSessionRepository.findById(sessionId)
 //                    .orElseThrow(() -> new SessionNotFoundException("Nie znaleziono sesji: " + sessionId));
 //            try (InputStream inputStream = file.getInputStream()) {
 //                parseCsv(inputStream, session);
-//                updateSessionStatus(session.getId(), "COMPLETED");
-//                return CompletableFuture.completedFuture(sessionId);
+//                updateSessionStatus(sessionId, "COMPLETED");
 //            } catch (Exception e) {
-//                updateSessionStatus(session.getId(), "FAILED");
-//                throw new InvalidInputData("Nie udało sie przetworzyć pliku", e);
+//                updateSessionStatus(sessionId, "FAILED");
+//                throw new RuntimeException("Nie udało się przetworzyć pliku", e);
 //            }
+//            return CompletableFuture.completedFuture(sessionId);
 //        } finally {
 //            lockManager.releaseLock("import_process");
 //        }
 //    }
 //
-//    private void parseCsv(InputStream inputStream, ImportStatus session) {
+//
+//    protected void parseCsv(InputStream inputStream, ImportStatus session) {
 //        try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
 //             CSVParser csvParser = new CSVParser(fileReader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim())) {
 //
@@ -153,19 +143,13 @@ public class FileImportService implements IFileImportService {
 //                futures.add(future);
 //            }
 //            CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
-//            updateSessionProgress(session, futures.size());
+//            updateSessionProgress(session, csvParser.getRecordNumber());
 //        } catch (Exception e) {
-//            throw new FailedImportException("Nie udało sie przetworzyć pliku", e);
+//            throw new FailedImportException("Nie udało się sparsować obiektów z pliku csv", e);
 //        }
 //    }
 //
-//    @Transactional(propagation = Propagation.REQUIRES_NEW)
-//    public void updateSessionProgress(ImportStatus session, int count) {
-//        session.incrementRecordsProcessed(count);
-//        importSessionRepository.save(session);
-//    }
 //
-//    @Transactional(propagation = Propagation.REQUIRES_NEW)
 //    public CompletableFuture<Void> processRecordAsync(Map<String, String> record) {
 //        return CompletableFuture.runAsync(() -> {
 //            String type = record.get("type");
@@ -178,8 +162,12 @@ public class FileImportService implements IFileImportService {
 //        });
 //    }
 //
-//    @Transactional(propagation = Propagation.REQUIRES_NEW)
-//    protected void updateSessionStatus(Long sessionId, String status) {
+//    public void updateSessionProgress(ImportStatus session, long count) {
+//        session.incrementRecordsProcessed(count);
+//        importSessionRepository.save(session);
+//    }
+//
+//    public void updateSessionStatus(Long sessionId, String status) {
 //        ImportStatus session = importSessionRepository.findById(sessionId)
 //                .orElseThrow(() -> new SessionNotFoundException("Nie znaleziono sesji: " + sessionId));
 //        session.setStatus(status);
@@ -191,8 +179,11 @@ public class FileImportService implements IFileImportService {
 //        ImportStatus session = new ImportStatus();
 //        session.setStartTime(LocalDateTime.now());
 //        session.setStatus("IN_PROGRESS");
-//        return importSessionRepository.save(session).getId();
+//        importSessionRepository.save(session);
+//        return session.getId();
 //    }
+}
+
 
 
 

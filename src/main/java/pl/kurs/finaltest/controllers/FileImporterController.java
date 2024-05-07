@@ -6,9 +6,11 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 import pl.kurs.finaltest.dto.ImportStatusDto;
 import pl.kurs.finaltest.database.entity.ImportStatus;
 import pl.kurs.finaltest.database.repositories.ImportSessionRepository;
+import pl.kurs.finaltest.exceptions.ImportInProgressException;
 import pl.kurs.finaltest.services.impl.FileImportService;
 
 import java.util.List;
@@ -28,7 +30,6 @@ public class FileImporterController {
         this.importSessionRepository = importSessionRepository;
         this.modelMapper = modelMapper;
     }
-
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = "application/json")
     public CompletableFuture<ResponseEntity<Long>> importCsv(@RequestParam("file") MultipartFile file) throws InterruptedException {
