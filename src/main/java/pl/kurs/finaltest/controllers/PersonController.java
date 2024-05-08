@@ -29,7 +29,6 @@ public class PersonController {
         return ResponseEntity.ok(personDtos);
     }
 
-
     @PostMapping
     public ResponseEntity<?> addPerson(@RequestBody PersonDto personDto) {
         PersonDto createdPersonDto = personService.addPerson(personDto);

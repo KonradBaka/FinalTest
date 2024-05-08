@@ -11,7 +11,7 @@ import jakarta.validation.constraints.NotBlank;
         @JsonSubTypes.Type(value = StudentDto.class, name = "student"),
         @JsonSubTypes.Type(value = EmployeeDto.class, name = "employee")
 })
-public class PersonDto { // implements PersonMarker
+public class PersonDto {
 
     private Long id;
     @NotBlank(message = "Typ wymagany.")

@@ -7,6 +7,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.kurs.finaltest.criteria.PersonCriteria;
+import pl.kurs.finaltest.criteria.StudentCriteria;
 import pl.kurs.finaltest.database.entity.Employee;
 import pl.kurs.finaltest.database.repositories.PositionRepository;
 import pl.kurs.finaltest.dto.DtoManager;

@@ -23,6 +23,4 @@ public class DtoManager {
     public Class<? extends PersonDto> getDtoClass(Class<? extends Person> personClass) {
         return dtoMap.getOrDefault(personClass, PersonDto.class);
     }
-
-
 }
