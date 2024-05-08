@@ -78,7 +78,7 @@ public class EmployeeStrategy implements PersonTypeStrategy<Employee, EmployeeDt
             employee.setEmploymentStartDate(LocalDate.parse(csvRecord.get("employmentStartDate"), formatter));
         }
 
-//        employee = personRepository.saveAndFlush(employee);
+        employee = personRepository.saveAndFlush(employee);
 
         if (csvRecord.get("currentPosition") != null) {
             Position position = new Position();
@@ -87,7 +87,7 @@ public class EmployeeStrategy implements PersonTypeStrategy<Employee, EmployeeDt
             position.setStartDate(employee.getEmploymentStartDate());
             position.setSalary(employee.getCurrentSalary());
 
-//            positionRepository.save(position);
+            positionRepository.save(position);
             employee.setCurrentPosition(position.getName());
         } else if (isNewEmployee.get()) {
             employee.setCurrentPosition(null);

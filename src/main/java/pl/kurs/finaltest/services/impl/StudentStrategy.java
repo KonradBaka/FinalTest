@@ -73,7 +73,6 @@ public class StudentStrategy implements PersonTypeStrategy<Student, StudentDto> 
             student.setScholarshipAmount(Double.valueOf(csvRecord.get("scholarship")));
         }
 
-//        return personRepository.save(student);
-        return student;
+        return personRepository.save(student);
     }
 }

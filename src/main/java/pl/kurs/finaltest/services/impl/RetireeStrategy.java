@@ -71,8 +71,7 @@ public class RetireeStrategy implements PersonTypeStrategy<Retiree, RetireeDto> 
             retiree.setYearsWorked(Integer.valueOf(csvRecord.get("yearsWorked")));
         }
 
-//        return personRepository.save(retiree);
-        return retiree;
+        return personRepository.save(retiree);
     }
 
 }
