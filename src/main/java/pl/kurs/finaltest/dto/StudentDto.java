@@ -48,8 +48,5 @@ public class StudentDto extends PersonDto{
         this.scholarshipAmount = scholarshipAmount;
     }
 
-//    @Override
-//    public String getTypeIdentifier() {
-//        return "student";
-//    }
+
 }

@@ -1,4 +1,4 @@
-package pl.kurs.finaltest.services.impl;
+package pl.kurs.finaltest.stategy;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
@@ -10,7 +10,6 @@ import pl.kurs.finaltest.database.entity.Employee;
 import pl.kurs.finaltest.database.entity.Position;
 import pl.kurs.finaltest.database.repositories.PersonRepository;
 import pl.kurs.finaltest.database.repositories.PositionRepository;
-import pl.kurs.finaltest.services.PersonTypeStrategy;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;

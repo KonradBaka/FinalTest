@@ -1,4 +1,4 @@
-package pl.kurs.finaltest.services;
+package pl.kurs.finaltest.stategy;
 
 import pl.kurs.finaltest.dto.PersonDto;
 import pl.kurs.finaltest.database.entity.Person;

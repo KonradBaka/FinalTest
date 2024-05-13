@@ -32,7 +32,7 @@ public class FileImporterController {
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = "application/json")
-    public CompletableFuture<ResponseEntity<Long>> importCsv(@RequestParam("file") MultipartFile file) throws InterruptedException {
+    public CompletableFuture<ResponseEntity<Long>> importCsv(@RequestParam("file") MultipartFile file) throws InterruptedException { // Pisałeś żebym zwracał tylko Long ale jak zwrócimy ID natychmiast po odpaleniu ?
         Long sessionId = fileImportService.createNewImportSession();
         return fileImportService.importFile(sessionId, file)
                 .thenApply(sId -> ResponseEntity.ok(sId));

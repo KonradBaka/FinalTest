@@ -27,8 +27,5 @@ public class RetireeDto extends PersonDto{
     }
 
 
-//    @Override
-//    public String getTypeIdentifier() {
-//        return "student";
-//    }
+
 }

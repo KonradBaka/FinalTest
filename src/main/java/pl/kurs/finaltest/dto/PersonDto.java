@@ -5,12 +5,12 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", visible = true)
-@JsonSubTypes({
-        @JsonSubTypes.Type(value = RetireeDto.class, name = "retiree"),
-        @JsonSubTypes.Type(value = StudentDto.class, name = "student"),
-        @JsonSubTypes.Type(value = EmployeeDto.class, name = "employee")
-})
+//@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", visible = true)
+//@JsonSubTypes({
+//        @JsonSubTypes.Type(value = RetireeDto.class, name = "retiree"),
+//        @JsonSubTypes.Type(value = StudentDto.class, name = "student"),
+//        @JsonSubTypes.Type(value = EmployeeDto.class, name = "employee")
+//})
 public class PersonDto {
 
     private Long id;
@@ -119,8 +119,5 @@ public class PersonDto {
         this.emailAddress = emailAddress;
     }
 
-//    @Override
-//    public String getTypeIdentifier() {
-//        return "person";
-//    }
+
 }

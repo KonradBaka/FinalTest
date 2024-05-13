@@ -45,7 +45,7 @@ public class PositionService implements IPositionService {
 
         newPosition.setEmployee(employee);
         Position savedPosition = positionRepository.save(newPosition);
-        personService.updateEmployeeDtoPositions(employee, personService.getEmployee(employeeId));
+//        personService.updateEmployeeDtoPositions(employee, personService.getEmployee(employeeId));
         return savedPosition;
     }
 
@@ -63,7 +63,7 @@ public class PositionService implements IPositionService {
                 () -> new EntityNotFoundException("Nie znaleziono pracownika podczas edycji pozycji")
         ));
         Position updatedPosition = positionRepository.save(position);
-        personService.updateEmployeeDtoPositions(position.getEmployee(), personService.getEmployee(position.getEmployee().getId()));
+//        personService.updateEmployeeDtoPositions(position.getEmployee(), personService.getEmployee(position.getEmployee().getId()));
         return updatedPosition;
     }
 

@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 public class EmployeeDto extends PersonDto {
 
@@ -16,15 +17,14 @@ public class EmployeeDto extends PersonDto {
     private String currentPosition;
     @NotNull(message = "Aktualna pensja wymagana")
     private Double currentSalary;
-    @NotNull
-    private Integer numberOfPositions;
+    private Set<PositionDto> positions;
 
-    public Integer getNumberOfPositions() {
-        return numberOfPositions;
+    public Set<PositionDto> getPositions() {
+        return positions;
     }
 
-    public void setNumberOfPositions(Integer numberOfPositions) {
-        this.numberOfPositions = numberOfPositions;
+    public void setPositions(Set<PositionDto> positions) {
+        this.positions = positions;
     }
 
     public LocalDate getEmploymentStartDate() {

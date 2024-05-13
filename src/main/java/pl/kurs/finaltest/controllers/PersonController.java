@@ -1,32 +1,40 @@
 package pl.kurs.finaltest.controllers;
 
 
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import pl.kurs.finaltest.criteria.PersonCriteria;
-import pl.kurs.finaltest.dto.DtoManager;
+import pl.kurs.finaltest.database.entity.Person;
 import pl.kurs.finaltest.dto.PersonDto;
 import pl.kurs.finaltest.services.impl.PersonService;
+import pl.kurs.finaltest.services.impl.SpecificationService;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/people")
 public class PersonController {
 
     private PersonService personService;
-    private DtoManager dtoManager;
+    private SpecificationService specificationService;
+    private ModelMapper modelMapper;
 
-    public PersonController(PersonService personService, DtoManager dtoManager) {
+    public PersonController(PersonService personService, SpecificationService specificationService, ModelMapper modelMapper) {
         this.personService = personService;
-        this.dtoManager = dtoManager;
+        this.specificationService = specificationService;
+        this.modelMapper = modelMapper;
     }
 
     @GetMapping
-    public ResponseEntity<Page<?>> searchPersons(@ModelAttribute PersonCriteria searchCriteria, Pageable pageable) {
-        Page<PersonDto> personDtos = personService.findPersons(searchCriteria, pageable);
-        return ResponseEntity.ok(personDtos);
+    public ResponseEntity<Page<Person>> searchPeople(@RequestParam Map<String, String> criteria, Pageable pageable) {
+        Specification<Person> spec = specificationService.createSpecification(criteria);
+        Page<Person> people = personService.searchPeople(spec, pageable);
+        return ResponseEntity.ok(people);
     }
 
     @PostMapping

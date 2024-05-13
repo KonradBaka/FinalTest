@@ -1,4 +1,4 @@
-package pl.kurs.finaltest.services.impl;
+package pl.kurs.finaltest.stategy;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
@@ -8,7 +8,6 @@ import pl.kurs.finaltest.dto.PersonDto;
 import pl.kurs.finaltest.dto.StudentDto;
 import pl.kurs.finaltest.database.entity.Student;
 import pl.kurs.finaltest.database.repositories.PersonRepository;
-import pl.kurs.finaltest.services.PersonTypeStrategy;
 
 import java.util.Map;
 

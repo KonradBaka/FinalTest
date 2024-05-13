@@ -12,9 +12,11 @@ import pl.kurs.finaltest.database.entity.Person;
 import pl.kurs.finaltest.database.repositories.ImportSessionRepository;
 import pl.kurs.finaltest.dto.PersonDto;
 import pl.kurs.finaltest.exceptions.ImportInProgressException;
+import pl.kurs.finaltest.exceptions.InvalidInputData;
 import pl.kurs.finaltest.exceptions.SessionNotFoundException;
 import pl.kurs.finaltest.services.IFileImportService;
-import pl.kurs.finaltest.services.PersonTypeStrategy;
+import pl.kurs.finaltest.stategy.PersonTypeStrategy;
+import pl.kurs.finaltest.stategy.PersonStrategyManager;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -44,7 +46,7 @@ public class FileImportService implements IFileImportService {
 
     @Async("fileImportTaskExecutor")
     public CompletableFuture<Long> importFile(Long sessionId, MultipartFile file) throws InterruptedException {
-        if (!lockManager.acquireLock("import_process")) {
+        if (!lockManager.acquireLock("import_process")) { //sprawdzanie czy nie trwa inny import, wykonywane na bazie danych wiec dziła webowo
             updateSessionStatus(sessionId, "FAILED");
             throw new ImportInProgressException("Obecnie trwa inny proces.");
         }
@@ -55,11 +57,11 @@ public class FileImportService implements IFileImportService {
             session.setStatus("IN_PROGRESS");
             importSessionRepository.save(session);
 
-            CompletableFuture<Void> task = CompletableFuture.runAsync(() -> {
+            CompletableFuture<Void> task = CompletableFuture.runAsync(() -> { //nieblokujące przetwarzanie rekordów, które mogą trwać długo w celu nie blokowania http
                 try (InputStream inputStream = file.getInputStream()) {
                     parseCsv(inputStream, session);
                 } catch (Exception e) {
-                    throw new RuntimeException("Nie udało się przetworzyć pliku", e);
+                    throw new InvalidInputData("Nie udało się przetworzyć pliku", e);
                 }
             });
 
