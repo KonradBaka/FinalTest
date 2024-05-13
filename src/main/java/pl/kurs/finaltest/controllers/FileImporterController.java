@@ -12,9 +12,11 @@ import pl.kurs.finaltest.database.entity.ImportStatus;
 import pl.kurs.finaltest.database.repositories.ImportSessionRepository;
 import pl.kurs.finaltest.exceptions.ImportInProgressException;
 import pl.kurs.finaltest.services.impl.FileImportService;
+import pl.kurs.finaltest.services.impl.ImportSessionService;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 @RestController
@@ -22,27 +24,26 @@ import java.util.stream.Collectors;
 public class FileImporterController {
 
     private FileImportService fileImportService;
-    private ImportSessionRepository importSessionRepository;
+    private ImportSessionService importSessionService;
     private ModelMapper modelMapper;
 
-    public FileImporterController(FileImportService fileImportService, ImportSessionRepository importSessionRepository, ModelMapper modelMapper) {
+    public FileImporterController(FileImportService fileImportService, ImportSessionService importSessionService, ModelMapper modelMapper) {
         this.fileImportService = fileImportService;
-        this.importSessionRepository = importSessionRepository;
+        this.importSessionService = importSessionService;
         this.modelMapper = modelMapper;
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = "application/json")
-    public CompletableFuture<ResponseEntity<Long>> importCsv(@RequestParam("file") MultipartFile file) throws InterruptedException { // Pisałeś żebym zwracał tylko Long ale jak zwrócimy ID natychmiast po odpaleniu ?
-        Long sessionId = fileImportService.createNewImportSession();
-        return fileImportService.importFile(sessionId, file)
-                .thenApply(sId -> ResponseEntity.ok(sId));
+    public ResponseEntity<CompletableFuture<Long>> importCsv(@RequestParam("file") MultipartFile file) {
+        CompletableFuture<Long> sessionFuture = fileImportService.importFile(file);
+        return ResponseEntity.ok(sessionFuture);
     }
 
 
     @GetMapping(produces = "application/json")
     public ResponseEntity<List<ImportStatusDto>> getImportStatus() {
-            List<ImportStatus> sessions = importSessionRepository.findAll();
-            List<ImportStatusDto> dtos = sessions.stream()
+        List<ImportStatus> allSessions = importSessionService.getAllSessions();
+        List<ImportStatusDto> dtos = allSessions.stream()
                     .map(session -> modelMapper.map(session, ImportStatusDto.class))
                     .collect(Collectors.toList());
             return ResponseEntity.ok(dtos);
