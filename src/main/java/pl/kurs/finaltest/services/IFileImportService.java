@@ -8,6 +8,6 @@ import java.util.concurrent.ExecutionException;
 
 public interface IFileImportService {
 
-    CompletableFuture<Long> importFile(MultipartFile file) throws ExecutionException, InterruptedException;
+    void importFile(MultipartFile file, Long sessionId);
 
 }

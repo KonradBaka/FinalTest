@@ -7,6 +7,7 @@ import java.util.Map;
 
 public interface PersonTypeStrategy<T extends Person, D extends PersonDto> {
     String getHandledType();
+
     boolean supports(PersonDto personDto);
 
     T addPerson(D personDto);

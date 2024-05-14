@@ -34,18 +34,18 @@ public class FileImporterController {
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = "application/json")
-    public ResponseEntity<CompletableFuture<Long>> importCsv(@RequestParam("file") MultipartFile file) {
-        CompletableFuture<Long> sessionFuture = fileImportService.importFile(file);
-        return ResponseEntity.ok(sessionFuture);
+    public ResponseEntity<Long> importCsv(@RequestParam("file") MultipartFile file) {
+        Long sessionId = fileImportService.initiateImportSession();
+        fileImportService.importFile(file, sessionId);
+        return ResponseEntity.ok(sessionId);
     }
-
 
     @GetMapping(produces = "application/json")
     public ResponseEntity<List<ImportStatusDto>> getImportStatus() {
         List<ImportStatus> allSessions = importSessionService.getAllSessions();
         List<ImportStatusDto> dtos = allSessions.stream()
-                    .map(session -> modelMapper.map(session, ImportStatusDto.class))
-                    .collect(Collectors.toList());
-            return ResponseEntity.ok(dtos);
+                .map(session -> modelMapper.map(session, ImportStatusDto.class))
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(dtos);
     }
 }

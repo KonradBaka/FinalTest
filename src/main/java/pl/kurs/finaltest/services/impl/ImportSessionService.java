@@ -20,13 +20,13 @@ public class ImportSessionService implements IImportSessionService {
         this.importSessionRepository = importSessionRepository;
     }
 
-    @Async("fileImportTaskExecutor")
-    public CompletableFuture<Long> createImportSession() {
+    @Override
+    public Long createImportSession() {
         ImportStatus session = new ImportStatus();
         session.setStartTime(LocalDateTime.now());
         session.setStatus("IN_PROGRESS");
         importSessionRepository.save(session);
-        return CompletableFuture.completedFuture(session.getId());
+        return session.getId();
     }
 
     @Override
@@ -44,13 +44,15 @@ public class ImportSessionService implements IImportSessionService {
                 .orElseThrow(() -> new SessionNotFoundException("Nie znaleziono sesji: " + sessionId));
     }
 
-
+    @Override
     public List<ImportStatus> getAllSessions() {
         return importSessionRepository.findAll();
     }
 
+    @Override
     public void incrementRecordsProcessed(Long sessionId) {
-        ImportStatus session = importSessionRepository.findById(sessionId).orElseThrow(() -> new SessionNotFoundException("Nie znaleziono sesji: " + sessionId));
+        ImportStatus session = importSessionRepository.findById(sessionId)
+                .orElseThrow(() -> new SessionNotFoundException("Nie znaleziono sesji: " + sessionId));
         session.setRecordsProcessed(session.getRecordsProcessed() + 1);
         importSessionRepository.save(session);
     }
