@@ -1,4 +1,4 @@
-package pl.kurs.finaltest.services;
+package pl.kurs.finaltest.services.impl;
 
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;

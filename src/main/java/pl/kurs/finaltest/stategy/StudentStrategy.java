@@ -3,11 +3,10 @@ package pl.kurs.finaltest.stategy;
 import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import pl.kurs.finaltest.dto.PersonDto;
-import pl.kurs.finaltest.dto.StudentDto;
 import pl.kurs.finaltest.database.entity.Student;
 import pl.kurs.finaltest.database.repositories.PersonRepository;
+import pl.kurs.finaltest.dto.PersonDto;
+import pl.kurs.finaltest.dto.StudentDto;
 
 import java.util.Map;
 
@@ -46,7 +45,6 @@ public class StudentStrategy implements PersonTypeStrategy<Student, StudentDto> 
     }
 
     @Override
-    @Transactional
     public Student importFromCsvRecord(Map<String, String> csvRecord) {
         Student student = new Student();
 

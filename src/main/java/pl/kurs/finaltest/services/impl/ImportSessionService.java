@@ -1,6 +1,5 @@
 package pl.kurs.finaltest.services.impl;
 
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import pl.kurs.finaltest.database.entity.ImportStatus;
 import pl.kurs.finaltest.database.repositories.ImportSessionRepository;
@@ -9,7 +8,6 @@ import pl.kurs.finaltest.services.IImportSessionService;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 @Service
 public class ImportSessionService implements IImportSessionService {

@@ -3,11 +3,10 @@ package pl.kurs.finaltest.stategy;
 import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import pl.kurs.finaltest.database.entity.Retiree;
+import pl.kurs.finaltest.database.repositories.PersonRepository;
 import pl.kurs.finaltest.dto.PersonDto;
 import pl.kurs.finaltest.dto.RetireeDto;
-import pl.kurs.finaltest.database.repositories.PersonRepository;
 
 import java.util.Map;
 
@@ -47,7 +46,6 @@ public class RetireeStrategy implements PersonTypeStrategy<Retiree, RetireeDto> 
     }
 
     @Override
-    @Transactional
     public Retiree importFromCsvRecord(Map<String, String> csvRecord) {
         Retiree retiree = new Retiree();
 

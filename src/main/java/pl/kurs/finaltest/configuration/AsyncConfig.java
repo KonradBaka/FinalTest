@@ -2,27 +2,25 @@ package pl.kurs.finaltest.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.scheduling.annotation.AsyncConfigurer;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.concurrent.Executor;
 
 @Configuration
-@EnableAsync(proxyTargetClass=true)
+@EnableAsync(proxyTargetClass = true)
 public class AsyncConfig {
 
-
-        @Bean(name ="fileImportTaskExecutor")
+    @Bean(name = "fileImportTaskExecutor")
     public Executor fileImportTaskExecutor() {
 
         ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
-        taskExecutor.setCorePoolSize(5);
-        taskExecutor.setMaxPoolSize(20);
+        taskExecutor.setCorePoolSize(1);
+        taskExecutor.setMaxPoolSize(1);
         taskExecutor.setQueueCapacity(500);
         taskExecutor.setThreadNamePrefix("ImportThread-");
         taskExecutor.initialize();
-
         return taskExecutor;
     }
+
 }

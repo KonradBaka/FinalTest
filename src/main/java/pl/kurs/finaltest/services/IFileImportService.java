@@ -8,6 +8,6 @@ import java.util.concurrent.ExecutionException;
 
 public interface IFileImportService {
 
-    void importFile(MultipartFile file, Long sessionId);
+    void importFile(String filePath, Long sessionId);
 
 }

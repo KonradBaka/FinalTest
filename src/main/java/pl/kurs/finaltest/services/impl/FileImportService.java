@@ -1,17 +1,21 @@
 package pl.kurs.finaltest.services.impl;
 
-import jakarta.transaction.Transactional;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 import pl.kurs.finaltest.database.entity.ImportStatus;
 import pl.kurs.finaltest.exceptions.ImportInProgressException;
 import pl.kurs.finaltest.exceptions.InvalidInputData;
 import pl.kurs.finaltest.services.IFileImportService;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.logging.Logger;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 @Service
 public class FileImportService implements IFileImportService {
@@ -31,30 +35,60 @@ public class FileImportService implements IFileImportService {
     }
 
 
-
     @Async("fileImportTaskExecutor")
-    public void importFile(MultipartFile file, Long sessionId) {
-        if (!lockManager.acquireLock("import_process")) {
-            importSessionService.updateImportSessionStatus(sessionId, "FAILED");
-            throw new ImportInProgressException("Inny proces w toku");
-        }
+    public void importFile(String filePath, Long sessionId) {
+        System.out.println("Rozpoczęcie importu: " + sessionId);//do kontroli błędów
         try {
-            ImportStatus session = importSessionService.getImportStatus(sessionId);
-            processFile(file, session);
-            importSessionService.updateImportSessionStatus(sessionId, "COMPLETED");
+            if (!lockManager.acquireLock("import_process")) {
+                importSessionService.updateImportSessionStatus(sessionId, "FAILED");
+                throw new ImportInProgressException("Inny proces w toku");
+            }
+            try (InputStream inputStream = new FileInputStream(filePath)) {
+                ImportStatus session = importSessionService.getImportStatus(sessionId);
+                csvImportService.parseCsv(inputStream, session);
+                importSessionService.updateImportSessionStatus(sessionId, "COMPLETED");
+                System.out.println("Import zakończony sukcesem: " + sessionId);
+            } catch (Exception e) {
+                importSessionService.updateImportSessionStatus(sessionId, "FAILED");
+                System.err.println("Błąd importu: " + sessionId);
+                e.printStackTrace();
+                throw new InvalidInputData("Nie udało się przetworzyć pliku", e);
+            } finally {
+                lockManager.releaseLock("import_process");
+                try {
+                    Files.deleteIfExists(Paths.get(filePath));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         } catch (Exception e) {
-            importSessionService.updateImportSessionStatus(sessionId, "FAILED");
-            throw new InvalidInputData("Nie udało się przetworzyć pliku");
-        } finally {
-            lockManager.releaseLock("import_process");
+            System.err.println("Error przy uploadzie pliku: " + sessionId);
+            e.printStackTrace();
         }
-    }
 
-    @Transactional
-    protected void processFile(MultipartFile file, ImportStatus session) throws IOException {
-        try (InputStream inputStream = file.getInputStream()) {
-            csvImportService.parseCsv(inputStream, session);
-        }
+
+//    @Async("fileImportTaskExecutor")
+//    public void importFile(MultipartFile file, Long sessionId) {
+//        try {
+//            if (!lockManager.acquireLock("import_process")) {
+//                importSessionService.updateImportSessionStatus(sessionId, "FAILED");
+//                throw new ImportInProgressException("Inny proces w toku");
+//            }
+//            try (InputStream inputStream = file.getInputStream()) {
+//                ImportStatus session = importSessionService.getImportStatus(sessionId);
+//                csvImportService.parseCsv(inputStream, session);
+//                importSessionService.updateImportSessionStatus(sessionId, "COMPLETED");
+//            } catch (Exception e) {
+//                importSessionService.updateImportSessionStatus(sessionId, "FAILED");
+//                e.printStackTrace();
+//                throw new InvalidInputData("Nie udało się przetworzyć pliku", e);
+//            } finally {
+//                lockManager.releaseLock("import_process");
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
     }
 }
 
