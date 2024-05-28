@@ -72,19 +72,7 @@ public class PersonService implements IPersonService {
         Employee employee = personRepository.findEmployeeById(employeeId)
                 .orElseThrow(() -> new InvalidInputData("Nie znaleziono pracownika: " + employeeId));
         EmployeeDto employeeDto = modelMapper.map(employee, EmployeeDto.class);
-//        updateEmployeeDtoPositions(employee, employeeDto);
         return employeeDto;
     }
-
-//    protected void updateEmployeeDtoPositions(Employee employee, EmployeeDto employeeDto) {
-//        Long count = positionRepository.countByEmployeeId(employee.getId());
-//        employeeDto.setNumberOfPositions(count.intValue());
-//    }
-//
-//    protected void updatePositionsForEmployee(Employee employee) {
-//        long positionCount = positionRepository.countByEmployeeId(employee.getId());
-//        EmployeeDto employeeDto = modelMapper.map(employee, EmployeeDto.class);
-//        employeeDto.setNumberOfPositions((int) positionCount);
-//    }
 }
 

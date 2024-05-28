@@ -3,6 +3,7 @@ package pl.kurs.finaltest.stategy;
 import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pl.kurs.finaltest.database.entity.Employee;
 import pl.kurs.finaltest.database.entity.Position;
 import pl.kurs.finaltest.database.repositories.PersonRepository;
@@ -53,6 +54,7 @@ public class EmployeeStrategy implements PersonTypeStrategy<Employee, EmployeeDt
     }
 
     @Override
+    @Transactional
     public Employee importFromCsvRecord(Map<String, String> csvRecord) {
         AtomicBoolean isNewEmployee = new AtomicBoolean(false);
         Employee employee = personRepository.findEmployeeByPesel(csvRecord.get("pesel"))

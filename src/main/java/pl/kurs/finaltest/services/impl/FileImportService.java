@@ -2,10 +2,7 @@ package pl.kurs.finaltest.services.impl;
 
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.transaction.annotation.Transactional;
 import pl.kurs.finaltest.database.entity.ImportStatus;
 import pl.kurs.finaltest.exceptions.ImportInProgressException;
 import pl.kurs.finaltest.exceptions.InvalidInputData;
@@ -62,35 +59,15 @@ public class FileImportService implements IFileImportService {
                 }
             }
         } catch (Exception e) {
+            importSessionService.updateImportSessionStatus(sessionId, "FAILED");
             System.err.println("Error przy uploadzie pliku: " + sessionId);
             e.printStackTrace();
         }
 
-
-//    @Async("fileImportTaskExecutor")
-//    public void importFile(MultipartFile file, Long sessionId) {
-//        try {
-//            if (!lockManager.acquireLock("import_process")) {
-//                importSessionService.updateImportSessionStatus(sessionId, "FAILED");
-//                throw new ImportInProgressException("Inny proces w toku");
-//            }
-//            try (InputStream inputStream = file.getInputStream()) {
-//                ImportStatus session = importSessionService.getImportStatus(sessionId);
-//                csvImportService.parseCsv(inputStream, session);
-//                importSessionService.updateImportSessionStatus(sessionId, "COMPLETED");
-//            } catch (Exception e) {
-//                importSessionService.updateImportSessionStatus(sessionId, "FAILED");
-//                e.printStackTrace();
-//                throw new InvalidInputData("Nie udało się przetworzyć pliku", e);
-//            } finally {
-//                lockManager.releaseLock("import_process");
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
     }
 }
+
+
 
 
 

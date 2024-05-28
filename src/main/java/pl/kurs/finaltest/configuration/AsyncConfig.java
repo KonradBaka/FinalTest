@@ -15,8 +15,8 @@ public class AsyncConfig {
     public Executor fileImportTaskExecutor() {
 
         ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
-        taskExecutor.setCorePoolSize(1);
-        taskExecutor.setMaxPoolSize(1);
+        taskExecutor.setCorePoolSize(5);
+        taskExecutor.setMaxPoolSize(20);
         taskExecutor.setQueueCapacity(500);
         taskExecutor.setThreadNamePrefix("ImportThread-");
         taskExecutor.initialize();

@@ -1,6 +1,7 @@
 package pl.kurs.finaltest.database.entity;
 
 import jakarta.persistence.*;
+import pl.kurs.finaltest.validations.pesel.Pesel;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -19,6 +20,7 @@ public abstract class Person implements Serializable {
     @Column(name = "last_name")
     private String lastName;
     @Column(name = "pesel", unique = true)
+    @Pesel
     private String pesel;
     @Column(name = "height")
     private Double height;

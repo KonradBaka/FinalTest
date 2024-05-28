@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import pl.kurs.finaltest.database.entity.ImportStatus;
 import pl.kurs.finaltest.dto.ImportStatusDto;
+import pl.kurs.finaltest.dto.StatusDto;
 import pl.kurs.finaltest.services.impl.FileImportService;
 import pl.kurs.finaltest.services.impl.ImportSessionService;
 
@@ -35,7 +36,7 @@ public class FileImporterController {
 
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = "application/json")
-    public ResponseEntity<Long> importCsv(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<StatusDto> importCsv(@RequestParam("file") MultipartFile file) {
         try {
 
             String path = "C:\\Users\\" + System.getProperty("user.name") + "\\Documents\\final-test\\";
@@ -45,7 +46,7 @@ public class FileImporterController {
             Long sessionId = fileImportService.initiateImportSession();
             fileImportService.importFile(tempFile.toString(), sessionId);
 
-            return ResponseEntity.ok(sessionId);
+            return ResponseEntity.ok(new StatusDto(sessionId.toString()));
         } catch (IOException e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
