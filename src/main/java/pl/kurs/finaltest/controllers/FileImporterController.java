@@ -53,13 +53,6 @@ public class FileImporterController {
         }
     }
 
-//    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = "application/json")
-//    public ResponseEntity<Long> importCsv(@RequestParam("file") MultipartFile file) {
-//        Long sessionId = fileImportService.initiateImportSession();
-//        fileImportService.importFile(file, sessionId);
-//        return ResponseEntity.ok(sessionId);
-//    }
-
     @GetMapping(produces = "application/json")
     public ResponseEntity<List<ImportStatusDto>> getImportStatus() {
         List<ImportStatus> allSessions = importSessionService.getAllSessions();

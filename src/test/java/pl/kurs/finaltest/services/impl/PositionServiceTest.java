@@ -45,7 +45,7 @@ public class PositionServiceTest {
     @Transactional
     void addPositionShouldAddPositionToEmployee() {
         // Given
-        Employee employee = createAndSaveEmployee("John", "Doe", "12345678901");
+        Employee employee = createAndSaveEmployee("John", "Doe", "12345678905");
         SimplePositionDto positionDto = new SimplePositionDto();
         positionDto.setName("Developer");
         positionDto.setStartDate(LocalDate.of(2023, 1, 1));
@@ -69,7 +69,7 @@ public class PositionServiceTest {
     @Transactional
     void updatePositionShouldUpdateExistingPosition() {
         // Given
-        Employee employee = createAndSaveEmployee("Jane", "Doe", "12345678902");
+        Employee employee = createAndSaveEmployee("Jane", "Doe", "12345678906");
         Position position = createAndSavePosition(employee, "Developer", LocalDate.of(2023, 1, 1), LocalDate.of(2023, 12, 31), 5000.0);
         PositionDto positionDto = new PositionDto();
         positionDto.setName("Senior Developer");
@@ -94,7 +94,7 @@ public class PositionServiceTest {
     @Transactional
     void findPositionsByEmployeeIdShouldReturnAllPositions() {
         // Given
-        Employee employee = createAndSaveEmployee("Mike", "Johnson", "12345678903");
+        Employee employee = createAndSaveEmployee("Mike", "Johnson", "12345678907");
         createAndSavePosition(employee, "Developer", LocalDate.of(2023, 1, 1), LocalDate.of(2023, 12, 31), 5000.0);
         createAndSavePosition(employee, "Manager", LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31), 7000.0);
 
