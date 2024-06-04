@@ -38,9 +38,13 @@ public class FileImporterController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = "application/json")
     public ResponseEntity<StatusDto> importCsv(@RequestParam("file") MultipartFile file) {
         try {
+            String userHome = System.getProperty("user.home");
+            Path path = Paths.get(userHome, "Documents", "final-test");
+            if (!Files.exists(path)) {
+                Files.createDirectories(path);
+            }
 
-            String path = "C:\\Users\\" + System.getProperty("user.name") + "\\Documents\\final-test\\";
-            Path tempFile = Files.createTempFile(Paths.get(path), "upload_", ".tmp");
+            Path tempFile = Files.createTempFile(path, "upload_", ".tmp");
             Files.copy(file.getInputStream(), tempFile, StandardCopyOption.REPLACE_EXISTING);
 
             Long sessionId = fileImportService.initiateImportSession();
