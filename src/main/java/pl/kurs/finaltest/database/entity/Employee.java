@@ -80,6 +80,11 @@ public class Employee extends Person {
         this.positions = positions;
     }
 
+    public void addPosition(Position position) {
+        position.setEmployee(this);
+        positions.add(position);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

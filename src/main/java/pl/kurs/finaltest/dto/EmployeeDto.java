@@ -4,10 +4,12 @@ import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import pl.kurs.finaltest.adnotations.PersonSubType;
 
 import java.time.LocalDate;
 import java.util.Set;
 
+@PersonSubType("employee")
 public class EmployeeDto extends PersonDto {
 
     @Temporal(TemporalType.DATE)
@@ -17,13 +19,13 @@ public class EmployeeDto extends PersonDto {
     private String currentPosition;
     @NotNull(message = "Aktualna pensja wymagana")
     private Double currentSalary;
-    private Set<PositionDto> positions;
+    private Set<SimplePositionDto> positions;
 
-    public Set<PositionDto> getPositions() {
+    public Set<SimplePositionDto> getPositions() {
         return positions;
     }
 
-    public void setPositions(Set<PositionDto> positions) {
+    public void setPositions(Set<SimplePositionDto> positions) {
         this.positions = positions;
     }
 

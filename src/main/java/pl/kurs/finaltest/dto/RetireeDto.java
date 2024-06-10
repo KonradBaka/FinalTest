@@ -1,7 +1,9 @@
 package pl.kurs.finaltest.dto;
 
 import jakarta.validation.constraints.NotNull;
+import pl.kurs.finaltest.adnotations.PersonSubType;
 
+@PersonSubType("retiree")
 public class RetireeDto extends PersonDto{
 
     @NotNull(message = "Emerytura wymagana.")

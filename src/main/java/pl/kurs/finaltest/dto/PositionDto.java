@@ -9,7 +9,6 @@ import java.time.LocalDate;
 @JsonTypeName("position")
 public class PositionDto {
 
-    @NotNull
     private Long id;
     @NotBlank(message = "Nazwa stanowiska wymagana.")
     private String name;

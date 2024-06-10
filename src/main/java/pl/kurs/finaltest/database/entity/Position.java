@@ -9,7 +9,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "positions")
-public class Position implements Serializable{
+public class Position implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -17,7 +17,7 @@ public class Position implements Serializable{
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "employee_id", nullable = false)
+    @JoinColumn(name = "employee_id", nullable = true)
     @JsonBackReference
     private Employee employee;
 
@@ -98,7 +98,6 @@ public class Position implements Serializable{
     public void setSalary(Double salary) {
         this.salary = salary;
     }
-
 
 
     @Override

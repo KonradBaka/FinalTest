@@ -1,11 +1,23 @@
 package pl.kurs.finaltest.configuration;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.jsontype.NamedType;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
+import org.reflections.Reflections;
+import org.reflections.scanners.Scanners;
+import org.reflections.util.ConfigurationBuilder;
+import org.reflections.util.FilterBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import pl.kurs.finaltest.adnotations.PersonSubType;
 import pl.kurs.finaltest.database.entity.Position;
+import pl.kurs.finaltest.dto.PersonDto;
 import pl.kurs.finaltest.dto.PositionDto;
+
+import java.util.Set;
 
 @Configuration
 public class BeansConfig {
@@ -21,7 +33,34 @@ public class BeansConfig {
 
         return mapper;
     }
+
+    @Bean
+    public ObjectMapper getCustomObjectMapper() {
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+
+        String dtoPackage = "pl.kurs.finaltest.dto";
+
+        Reflections reflections = new Reflections(new ConfigurationBuilder()
+                .forPackages(dtoPackage)
+                .filterInputsBy(new FilterBuilder().includePackage(dtoPackage))
+                .setScanners(Scanners.TypesAnnotated));
+
+        Set<Class<?>> subtypes = reflections.getTypesAnnotatedWith(PersonSubType.class);
+
+        for (Class<?> subType : subtypes) {
+            PersonSubType annotation = subType.getAnnotation(PersonSubType.class);
+            if (annotation != null) {
+                String typeName = annotation.value();
+                objectMapper.registerSubtypes(new NamedType(subType, typeName));
+            }
+        }
+
+        return objectMapper;
+    }
 }
+
 
 
 

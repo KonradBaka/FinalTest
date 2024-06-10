@@ -25,18 +25,6 @@ public class SpecificationService implements ISpecificationService {
             DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE;
 
 
-            if (criteria.containsKey("positionsCountFrom") || criteria.containsKey("positionsCountTo")) {
-                if (Employee.class.isAssignableFrom(root.getJavaType())) {
-                    Join<Employee, Position> positionJoin = root.join("positions", JoinType.LEFT);
-                    Expression<Long> positionsCount = criteriaBuilder.count(positionJoin.get("id"));
-
-                    Long positionsCountFrom = Long.valueOf(criteria.getOrDefault("positionsCountFrom", "0"));
-                    Long positionsCountTo = Long.valueOf(criteria.getOrDefault("positionsCountTo", String.valueOf(Long.MAX_VALUE)));
-
-                    predicates.add(criteriaBuilder.between(positionsCount, positionsCountFrom, positionsCountTo));
-                }
-            }
-
             criteria.forEach((key, value) -> {
                 String actualKey = null;
                 if (key.endsWith("From")) {

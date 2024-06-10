@@ -6,6 +6,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
@@ -57,6 +58,16 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({InvalidInputData.class})
     public ResponseEntity<ExceptionsResponseDto> handleInvalidInputData(InvalidInputData e) {
+        ExceptionsResponseDto responseDto = new ExceptionsResponseDto(
+                List.of(e.getMessage()),
+                "BAD_REQUEST",
+                Timestamp.from(Instant.now())
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
+    }
+
+    @ExceptionHandler({IOException.class})
+    public ResponseEntity<ExceptionsResponseDto> handleInvalidInputData(IOException e) {
         ExceptionsResponseDto responseDto = new ExceptionsResponseDto(
                 List.of(e.getMessage()),
                 "BAD_REQUEST",

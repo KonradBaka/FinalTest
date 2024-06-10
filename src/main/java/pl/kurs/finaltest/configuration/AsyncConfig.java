@@ -11,7 +11,7 @@ import java.util.concurrent.Executor;
 @EnableAsync(proxyTargetClass = true)
 public class AsyncConfig {
 
-    @Bean(name = "fileImportTaskExecutor")
+    @Bean(name = "fileImport")
     public Executor fileImportTaskExecutor() {
 
         ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();

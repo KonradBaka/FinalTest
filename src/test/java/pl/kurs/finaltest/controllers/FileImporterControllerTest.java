@@ -11,16 +11,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.TestPropertySource;
-import pl.kurs.finaltest.database.entity.ImportStatus;
-import pl.kurs.finaltest.dto.ImportStatusDto;
 import pl.kurs.finaltest.dto.StatusDto;
 import pl.kurs.finaltest.services.impl.FileImportService;
 import pl.kurs.finaltest.services.impl.ImportSessionService;
 
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;

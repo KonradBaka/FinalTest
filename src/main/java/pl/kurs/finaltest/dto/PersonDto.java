@@ -1,14 +1,10 @@
 package pl.kurs.finaltest.dto;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
-//@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", visible = true)
-//@JsonSubTypes({
-//        @JsonSubTypes.Type(value = RetireeDto.class, name = "retiree"),
-//        @JsonSubTypes.Type(value = StudentDto.class, name = "student"),
-//        @JsonSubTypes.Type(value = EmployeeDto.class, name = "employee")
-//})
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "type", visible = true)
 public class PersonDto {
 
     private Long id;

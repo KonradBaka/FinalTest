@@ -2,7 +2,6 @@ package pl.kurs.finaltest.services.impl;
 
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import pl.kurs.finaltest.database.entity.ImportStatus;
 import pl.kurs.finaltest.exceptions.ImportInProgressException;
 import pl.kurs.finaltest.exceptions.InvalidInputData;
@@ -32,7 +31,7 @@ public class FileImportService implements IFileImportService {
     }
 
 
-    @Async("fileImportTaskExecutor")
+    @Async("fileImport")
     public void importFile(String filePath, Long sessionId) {
         System.out.println("Rozpoczęcie importu: " + sessionId);//do kontroli błędów
         try {

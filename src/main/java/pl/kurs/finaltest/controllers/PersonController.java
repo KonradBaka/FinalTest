@@ -1,13 +1,10 @@
 package pl.kurs.finaltest.controllers;
 
-
-import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import pl.kurs.finaltest.database.entity.Person;
 import pl.kurs.finaltest.dto.PersonDto;
@@ -22,12 +19,11 @@ public class PersonController {
 
     private PersonService personService;
     private SpecificationService specificationService;
-    private ModelMapper modelMapper;
 
-    public PersonController(PersonService personService, SpecificationService specificationService, ModelMapper modelMapper) {
+
+    public PersonController(PersonService personService, SpecificationService specificationService) {
         this.personService = personService;
         this.specificationService = specificationService;
-        this.modelMapper = modelMapper;
     }
 
     @GetMapping
