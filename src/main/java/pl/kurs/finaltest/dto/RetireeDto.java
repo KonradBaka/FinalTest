@@ -1,7 +1,7 @@
 package pl.kurs.finaltest.dto;
 
 import jakarta.validation.constraints.NotNull;
-import pl.kurs.finaltest.adnotations.PersonSubType;
+import pl.kurs.finaltest.annotations.PersonSubType;
 
 @PersonSubType("retiree")
 public class RetireeDto extends PersonDto{

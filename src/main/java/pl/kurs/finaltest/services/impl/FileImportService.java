@@ -33,7 +33,6 @@ public class FileImportService implements IFileImportService {
 
     @Async("fileImport")
     public void importFile(String filePath, Long sessionId) {
-        System.out.println("Rozpoczęcie importu: " + sessionId);//do kontroli błędów
         try {
             if (!lockManager.acquireLock("import_process")) {
                 importSessionService.updateImportSessionStatus(sessionId, "FAILED");
@@ -43,26 +42,20 @@ public class FileImportService implements IFileImportService {
                 ImportStatus session = importSessionService.getImportStatus(sessionId);
                 csvImportService.parseCsv(inputStream, session);
                 importSessionService.updateImportSessionStatus(sessionId, "COMPLETED");
-                System.out.println("Import zakończony sukcesem: " + sessionId);
             } catch (Exception e) {
                 importSessionService.updateImportSessionStatus(sessionId, "FAILED");
-                System.err.println("Błąd importu: " + sessionId);
-                e.printStackTrace();
                 throw new InvalidInputData("Nie udało się przetworzyć pliku", e);
             } finally {
                 lockManager.releaseLock("import_process");
                 try {
                     Files.deleteIfExists(Paths.get(filePath));
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    throw new InvalidInputData("Nie udało się przetworzyć pliku", e);
                 }
             }
         } catch (Exception e) {
             importSessionService.updateImportSessionStatus(sessionId, "FAILED");
-            System.err.println("Error przy uploadzie pliku: " + sessionId);
-            e.printStackTrace();
         }
-
     }
 }
 

@@ -18,5 +18,5 @@ public interface IImportSessionService {
 
     List<ImportStatus> getAllSessions();
 
-    void incrementRecordsProcessed(Long sessionId);
+    void incrementRecordsProcessed(Long sessionId, int incrementBy);
 }

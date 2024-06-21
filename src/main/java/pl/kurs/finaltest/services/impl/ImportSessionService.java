@@ -48,10 +48,10 @@ public class ImportSessionService implements IImportSessionService {
     }
 
     @Override
-    public void incrementRecordsProcessed(Long sessionId) {
+    public void incrementRecordsProcessed(Long sessionId, int incrementBy) {
         ImportStatus session = importSessionRepository.findById(sessionId)
                 .orElseThrow(() -> new SessionNotFoundException("Nie znaleziono sesji: " + sessionId));
-        session.setRecordsProcessed(session.getRecordsProcessed() + 1);
+        session.setRecordsProcessed(session.getRecordsProcessed() + incrementBy);
         importSessionRepository.save(session);
     }
 }

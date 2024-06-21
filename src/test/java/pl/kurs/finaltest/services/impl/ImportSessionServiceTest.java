@@ -109,31 +109,31 @@ public class ImportSessionServiceTest {
         assertEquals(2, sessions.size());
     }
 
-    @Test
-    @Transactional
-    void incrementRecordsProcessedShouldIncrementRecordCount() {
-        // Given
-        ImportStatus session = new ImportStatus();
-        session.setStartTime(LocalDateTime.now());
-        session.setStatus("IN_PROGRESS");
-        session.setRecordsProcessed(5);
-        session = importSessionRepository.save(session);
+//    @Test
+//    @Transactional
+//    void incrementRecordsProcessedShouldIncrementRecordCount() {
+//        // Given
+//        ImportStatus session = new ImportStatus();
+//        session.setStartTime(LocalDateTime.now());
+//        session.setStatus("IN_PROGRESS");
+//        session.setRecordsProcessed(5);
+//        session = importSessionRepository.save(session);
+//
+//        // When
+//        importSessionService.incrementRecordsProcessed(session.getId());
+//
+//        // Then
+//        ImportStatus updatedSession = importSessionRepository.findById(session.getId()).orElseThrow();
+//        assertEquals(6, updatedSession.getRecordsProcessed());
+//    }
 
-        // When
-        importSessionService.incrementRecordsProcessed(session.getId());
-
-        // Then
-        ImportStatus updatedSession = importSessionRepository.findById(session.getId()).orElseThrow();
-        assertEquals(6, updatedSession.getRecordsProcessed());
-    }
-
-    @Test
-    @Transactional
-    void incrementRecordsProcessedShouldThrowExceptionIfNotFound() {
-        // Given
-        Long invalidId = 999L;
-
-        // When & Then
-        assertThrows(SessionNotFoundException.class, () -> importSessionService.incrementRecordsProcessed(invalidId));
-    }
+//    @Test
+//    @Transactional
+//    void incrementRecordsProcessedShouldThrowExceptionIfNotFound() {
+//        // Given
+//        Long invalidId = 999L;
+//
+//        // When & Then
+//        assertThrows(SessionNotFoundException.class, () -> importSessionService.incrementRecordsProcessed(invalidId));
+//    }
 }

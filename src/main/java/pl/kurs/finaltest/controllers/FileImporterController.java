@@ -32,8 +32,9 @@ public class FileImporterController {
     }
 
 
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = "application/json")
+    @PostMapping
     public ResponseEntity<StatusDto> importCsv(@RequestParam("file") MultipartFile file) throws IOException {
+
         String userHome = System.getProperty("user.home");
         Path path = Paths.get(userHome, "Documents", "final-test");
         if (!Files.exists(path)) {

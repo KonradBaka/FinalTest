@@ -4,7 +4,7 @@ import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import pl.kurs.finaltest.adnotations.PersonSubType;
+import pl.kurs.finaltest.annotations.PersonSubType;
 
 import java.time.LocalDate;
 import java.util.Set;

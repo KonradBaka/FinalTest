@@ -2,6 +2,7 @@ package pl.kurs.finaltest.stategy;
 
 import org.springframework.stereotype.Service;
 import pl.kurs.finaltest.dto.PersonDto;
+import pl.kurs.finaltest.dto.SimplePersonDto;
 import pl.kurs.finaltest.exceptions.InvalidInputData;
 import pl.kurs.finaltest.database.entity.Person;
 

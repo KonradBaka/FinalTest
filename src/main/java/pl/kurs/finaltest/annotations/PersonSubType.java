@@ -1,4 +1,4 @@
-package pl.kurs.finaltest.adnotations;
+package pl.kurs.finaltest.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

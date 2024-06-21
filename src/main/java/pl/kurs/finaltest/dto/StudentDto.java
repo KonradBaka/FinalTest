@@ -2,7 +2,7 @@ package pl.kurs.finaltest.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import pl.kurs.finaltest.adnotations.PersonSubType;
+import pl.kurs.finaltest.annotations.PersonSubType;
 
 @PersonSubType("student")
 public class StudentDto extends PersonDto{

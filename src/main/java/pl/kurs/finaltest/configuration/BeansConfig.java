@@ -2,7 +2,6 @@ package pl.kurs.finaltest.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
@@ -12,9 +11,8 @@ import org.reflections.util.ConfigurationBuilder;
 import org.reflections.util.FilterBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import pl.kurs.finaltest.adnotations.PersonSubType;
+import pl.kurs.finaltest.annotations.PersonSubType;
 import pl.kurs.finaltest.database.entity.Position;
-import pl.kurs.finaltest.dto.PersonDto;
 import pl.kurs.finaltest.dto.PositionDto;
 
 import java.util.Set;
@@ -33,6 +31,7 @@ public class BeansConfig {
 
         return mapper;
     }
+
 
     @Bean
     public ObjectMapper getCustomObjectMapper() {

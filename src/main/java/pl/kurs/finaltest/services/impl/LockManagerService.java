@@ -43,5 +43,4 @@ public class LockManagerService {
         lockManagerRepository.save(lock);
         System.out.println("-ODBLOKOWANO-");
     }
-
 }
