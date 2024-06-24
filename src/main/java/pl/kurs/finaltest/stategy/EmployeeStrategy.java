@@ -10,6 +10,7 @@ import pl.kurs.finaltest.database.repositories.PersonRepository;
 import pl.kurs.finaltest.database.repositories.PositionRepository;
 import pl.kurs.finaltest.dto.EmployeeDto;
 import pl.kurs.finaltest.dto.PersonDto;
+import pl.kurs.finaltest.exceptions.UserNotFoundException;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -48,7 +49,7 @@ public class EmployeeStrategy implements PersonTypeStrategy<Employee, EmployeeDt
 
     @Override
     public Employee editPerson(Long id, EmployeeDto employeeDto) {
-        Employee employee = (Employee) personRepository.findPersonByIdWithOptymisticLock(id).orElseThrow(EntityNotFoundException::new);
+        Employee employee = (Employee) personRepository.findPersonByIdWithOptymisticLock(id).orElseThrow(UserNotFoundException::new);
         modelMapper.map(employeeDto, employee);
         return personRepository.save(employee);
     }

@@ -16,6 +16,10 @@ import pl.kurs.finaltest.database.entity.Position;
 import pl.kurs.finaltest.dto.PositionDto;
 
 import java.util.Set;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
 
 @Configuration
 public class BeansConfig {
@@ -58,6 +62,17 @@ public class BeansConfig {
 
         return objectMapper;
     }
+
+    @Bean
+    public BlockingQueue<Runnable> importQueue() {
+        return new LinkedBlockingQueue<>();
+    }
+
+    @Bean
+    public ExecutorService importExecutorService() {
+        return Executors.newSingleThreadExecutor();
+    }
+
 }
 
 

@@ -92,48 +92,38 @@ public class ImportSessionServiceTest {
 
     @Test
     @Transactional
-    void getAllSessionsShouldReturnAllSessions() {
+    void incrementRecordsProcessedShouldIncrementRecordCount() {
         // Given
-        ImportStatus session1 = new ImportStatus();
-        session1.setStartTime(LocalDateTime.now());
-        session1.setStatus("IN_PROGRESS");
-        ImportStatus session2 = new ImportStatus();
-        session2.setStartTime(LocalDateTime.now());
-        session2.setStatus("IN_PROGRESS");
-        importSessionRepository.saveAll(Arrays.asList(session1, session2));
+        ImportStatus session = new ImportStatus();
+        session.setStartTime(LocalDateTime.now());
+        session.setStatus("IN_PROGRESS");
+        session.setRecordsProcessed(5);
+        session = importSessionRepository.save(session);
 
         // When
-        List<ImportStatus> sessions = importSessionService.getAllSessions();
+        importSessionService.incrementRecordsProcessed(session.getId(), 1);
 
         // Then
-        assertEquals(2, sessions.size());
+        ImportStatus updatedSession = importSessionRepository.findById(session.getId()).orElseThrow();
+        assertEquals(6, updatedSession.getRecordsProcessed());
     }
 
-//    @Test
-//    @Transactional
-//    void incrementRecordsProcessedShouldIncrementRecordCount() {
-//        // Given
-//        ImportStatus session = new ImportStatus();
-//        session.setStartTime(LocalDateTime.now());
-//        session.setStatus("IN_PROGRESS");
-//        session.setRecordsProcessed(5);
-//        session = importSessionRepository.save(session);
-//
-//        // When
-//        importSessionService.incrementRecordsProcessed(session.getId());
-//
-//        // Then
-//        ImportStatus updatedSession = importSessionRepository.findById(session.getId()).orElseThrow();
-//        assertEquals(6, updatedSession.getRecordsProcessed());
-//    }
+    @Test
+    @Transactional
+    void incrementRecordsProcessedShouldIncrementBySpecifiedAmount() {
+        // Given
+        ImportStatus session = new ImportStatus();
+        session.setStartTime(LocalDateTime.now());
+        session.setStatus("IN_PROGRESS");
+        session.setRecordsProcessed(5);
+        session = importSessionRepository.save(session);
 
-//    @Test
-//    @Transactional
-//    void incrementRecordsProcessedShouldThrowExceptionIfNotFound() {
-//        // Given
-//        Long invalidId = 999L;
-//
-//        // When & Then
-//        assertThrows(SessionNotFoundException.class, () -> importSessionService.incrementRecordsProcessed(invalidId));
-//    }
+        // When
+        importSessionService.incrementRecordsProcessed(session.getId(), 3);
+
+        // Then
+        ImportStatus updatedSession = importSessionRepository.findById(session.getId()).orElseThrow();
+        assertEquals(8, updatedSession.getRecordsProcessed());
+    }
+
 }

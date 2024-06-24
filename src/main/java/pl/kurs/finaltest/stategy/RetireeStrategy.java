@@ -8,6 +8,7 @@ import pl.kurs.finaltest.database.entity.Retiree;
 import pl.kurs.finaltest.database.repositories.PersonRepository;
 import pl.kurs.finaltest.dto.PersonDto;
 import pl.kurs.finaltest.dto.RetireeDto;
+import pl.kurs.finaltest.exceptions.UserNotFoundException;
 
 import java.util.Map;
 
@@ -41,7 +42,7 @@ public class RetireeStrategy implements PersonTypeStrategy<Retiree, RetireeDto> 
 
     @Override
     public Retiree editPerson(Long id, RetireeDto retireeDto) {
-        Retiree retiree = (Retiree) personRepository.findPersonByIdWithOptymisticLock(id).orElseThrow(EntityNotFoundException::new);
+        Retiree retiree = (Retiree) personRepository.findPersonByIdWithOptymisticLock(id).orElseThrow(UserNotFoundException::new);
         modelMapper.map(retireeDto, retiree);
         return personRepository.save(retiree);
     }

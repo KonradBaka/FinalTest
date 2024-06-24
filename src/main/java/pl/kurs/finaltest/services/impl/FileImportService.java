@@ -12,18 +12,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.concurrent.BlockingQueue;
 
 @Service
 public class FileImportService implements IFileImportService {
 
     private CsvImportService csvImportService;
     private ImportSessionService importSessionService;
-    private LockManagerService lockManager;
+    private ImportQueueService importQueueService;
 
-    public FileImportService(CsvImportService csvImportService, ImportSessionService importSessionService, LockManagerService lockManager) {
+
+    public FileImportService(CsvImportService csvImportService, ImportSessionService importSessionService, ImportQueueService importQueueService) {
         this.csvImportService = csvImportService;
         this.importSessionService = importSessionService;
-        this.lockManager = lockManager;
+        this.importQueueService = importQueueService;
     }
 
     public Long initiateImportSession() {
@@ -33,29 +35,22 @@ public class FileImportService implements IFileImportService {
 
     @Async("fileImport")
     public void importFile(String filePath, Long sessionId) {
-        try {
-            if (!lockManager.acquireLock("import_process")) {
-                importSessionService.updateImportSessionStatus(sessionId, "FAILED");
-                throw new ImportInProgressException("Inny proces w toku");
-            }
-            try (InputStream inputStream = new FileInputStream(filePath)) {
-                ImportStatus session = importSessionService.getImportStatus(sessionId);
-                csvImportService.parseCsv(inputStream, session);
-                importSessionService.updateImportSessionStatus(sessionId, "COMPLETED");
+        importQueueService.addImportTask(() -> {
+            try {
+                try (InputStream inputStream = new FileInputStream(filePath)) {
+                    ImportStatus session = importSessionService.getImportStatus(sessionId);
+                    csvImportService.parseCsv(inputStream, session);
+                    importSessionService.updateImportSessionStatus(sessionId, "COMPLETED");
+                } catch (Exception e) {
+                    importSessionService.updateImportSessionStatus(sessionId, "FAILED");
+                    throw new InvalidInputData("Nie udało się przetworzyć pliku", e);
+                } finally {
+                    Files.deleteIfExists(Paths.get(filePath));
+                }
             } catch (Exception e) {
                 importSessionService.updateImportSessionStatus(sessionId, "FAILED");
-                throw new InvalidInputData("Nie udało się przetworzyć pliku", e);
-            } finally {
-                lockManager.releaseLock("import_process");
-                try {
-                    Files.deleteIfExists(Paths.get(filePath));
-                } catch (IOException e) {
-                    throw new InvalidInputData("Nie udało się przetworzyć pliku", e);
-                }
             }
-        } catch (Exception e) {
-            importSessionService.updateImportSessionStatus(sessionId, "FAILED");
-        }
+        });
     }
 }
 

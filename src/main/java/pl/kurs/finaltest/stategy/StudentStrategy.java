@@ -8,6 +8,7 @@ import pl.kurs.finaltest.database.entity.Student;
 import pl.kurs.finaltest.database.repositories.PersonRepository;
 import pl.kurs.finaltest.dto.PersonDto;
 import pl.kurs.finaltest.dto.StudentDto;
+import pl.kurs.finaltest.exceptions.UserNotFoundException;
 
 import java.util.Map;
 
@@ -40,7 +41,7 @@ public class StudentStrategy implements PersonTypeStrategy<Student, StudentDto> 
 
     @Override
     public Student editPerson(Long id, StudentDto studentDto) {
-        Student student = (Student) personRepository.findPersonByIdWithOptymisticLock(id).orElseThrow(EntityNotFoundException::new);
+        Student student = (Student) personRepository.findPersonByIdWithOptymisticLock(id).orElseThrow(UserNotFoundException::new);
         modelMapper.map(studentDto, student);
         return personRepository.save(student);
     }
