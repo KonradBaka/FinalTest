@@ -70,11 +70,17 @@ public class Employee extends Person {
     }
 
     public Set<Position> getPositions() {
-        return positions.stream().map(pos -> {
-            pos.setEmployee(null);
-            return pos;
-        }).collect(Collectors.toSet());
+        return positions;
     }
+
+    //    public Set<Position> getPositions() {
+//        return positions.stream().map(pos -> {
+//            pos.setEmployee(null);
+//            return pos;
+//        }).collect(Collectors.toSet());
+//    }
+
+
 
     public void setPositions(Set<Position> positions) {
         this.positions = positions;

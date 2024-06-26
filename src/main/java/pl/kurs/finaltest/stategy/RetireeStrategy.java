@@ -43,6 +43,7 @@ public class RetireeStrategy implements PersonTypeStrategy<Retiree, RetireeDto> 
     @Override
     public Retiree editPerson(Long id, RetireeDto retireeDto) {
         Retiree retiree = (Retiree) personRepository.findPersonByIdWithOptymisticLock(id).orElseThrow(UserNotFoundException::new);
+        retireeDto.setId(id);
         modelMapper.map(retireeDto, retiree);
         return personRepository.save(retiree);
     }
@@ -73,5 +74,4 @@ public class RetireeStrategy implements PersonTypeStrategy<Retiree, RetireeDto> 
 
         return personRepository.save(retiree);
     }
-
 }

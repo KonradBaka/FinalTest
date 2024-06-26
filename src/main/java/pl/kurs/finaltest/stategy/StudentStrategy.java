@@ -42,6 +42,7 @@ public class StudentStrategy implements PersonTypeStrategy<Student, StudentDto> 
     @Override
     public Student editPerson(Long id, StudentDto studentDto) {
         Student student = (Student) personRepository.findPersonByIdWithOptymisticLock(id).orElseThrow(UserNotFoundException::new);
+        studentDto.setId(id);
         modelMapper.map(studentDto, student);
         return personRepository.save(student);
     }

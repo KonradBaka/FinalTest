@@ -57,6 +57,10 @@ public abstract class Person implements Serializable {
         this.emailAddress = emailAddress;
     }
 
+    public Long getVersion() {
+        return version;
+    }
+
     public String getType() {
         return type;
     }

@@ -2,7 +2,6 @@ package pl.kurs.finaltest.services.impl;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -30,8 +29,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 @TestPropertySource(locations = "classpath:application-test.properties")
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class FileImportServiceTest {
+
 
     @Autowired
     private CsvImportService csvImportService;
@@ -83,11 +82,11 @@ public class FileImportServiceTest {
     void importFileShouldSaveObjectsToDatabase() throws Exception {
         // Given
         String csvData = "type,firstName,lastName,pesel,height,weight,emailAddress,pensionAmount,yearsWorked,universityName,yearOfStudy,fieldOfStudy,scholarshipAmount,employmentStartDate,currentPosition,currentSalary\n" +
-                "retiree,John,Smith,12345678901,175,80,john.smith@example.com,2000.50,35,,,,,,,\n" +
-                "student,Jane,Doe,12345678902,160,60,jane.doe@example.com,,,University,3,Computer Science,1500.75,,,\n" +
-                "employee,Michael,Johnson,12345678903,180,85,michael.johnson@example.com,,,,,,,2020-01-15,Software Engineer,7500.00\n";
+                "retiree,John,Smith,98745678901,175,80,john.smith@example.com,2000.50,35,,,,,,,\n" +
+                "student,Jane,Doe,45645678902,160,60,jane.doe@example.com,,,University,3,Computer Science,1500.75,,,\n" +
+                "employee,Michael,Johnson,78945678903,180,85,michael.johnson@example.com,,,,,,,2020-01-15,Software Engineer,7500.00\n";
         ByteArrayInputStream inputStream = new ByteArrayInputStream(csvData.getBytes(StandardCharsets.UTF_8));
-        String tempFilePath = "temp1.csv";
+        String tempFilePath = Files.createTempFile("tempFile", ".csv").toString();
         Files.copy(inputStream, Paths.get(tempFilePath), StandardCopyOption.REPLACE_EXISTING);
 
         ImportStatus session = new ImportStatus();
@@ -112,7 +111,7 @@ public class FileImportServiceTest {
     @Transactional
     void importFileShouldHandleExceptions() throws Exception {
         // Given
-        String tempFilePath = "temp2.csv";
+        String tempFilePath = "temp3.csv";
         Files.createFile(Paths.get(tempFilePath));
 
         ImportStatus session = new ImportStatus();
@@ -133,8 +132,8 @@ public class FileImportServiceTest {
         // When
         fileImportService.importFile(tempFilePath, session.getId());
 
-        // Upewnienie się, że procesy asynchroniczne są zakończone
-        Thread.sleep(4000);
+        // Upewnienie się, że metoda asynchroniczna się skończyła
+        Thread.sleep(3000);
 
         // Then
         assertEquals(0, personRepository.count(), "There should be no people in the database due to the exception");
@@ -145,13 +144,13 @@ public class FileImportServiceTest {
     void importFileShouldHandleMultipleRequestsInQueue() throws Exception {
         // Given
         String csvData1 = "type,firstName,lastName,pesel,height,weight,emailAddress,pensionAmount,yearsWorked,universityName,yearOfStudy,fieldOfStudy,scholarshipAmount,employmentStartDate,currentPosition,currentSalary\n" +
-                "retiree,John,Smith,12345678901,175,80,john.smith@example.com,2000.50,35,,,,,,,\n";
+                "retiree,John,Smith,23145678904,175,80,john.smith@example.com,2000.50,35,,,,,,,\n";
         String csvData2 = "type,firstName,lastName,pesel,height,weight,emailAddress,pensionAmount,yearsWorked,universityName,yearOfStudy,fieldOfStudy,scholarshipAmount,employmentStartDate,currentPosition,currentSalary\n" +
-                "student,Jane,Doe,12345678902,160,60,jane.doe@example.com,,,University,3,Computer Science,1500.75,,,\n";
+                "student,Jane,Doe,32145678906,160,60,jane.doe@example.com,,,University,3,Computer Science,1500.75,,,\n";
         ByteArrayInputStream inputStream1 = new ByteArrayInputStream(csvData1.getBytes(StandardCharsets.UTF_8));
         ByteArrayInputStream inputStream2 = new ByteArrayInputStream(csvData2.getBytes(StandardCharsets.UTF_8));
-        String tempFilePath1 = "temp3.csv";
-        String tempFilePath2 = "temp4.csv";
+        String tempFilePath1 = "temp2.csv";
+        String tempFilePath2 = "temp1.csv";
         Files.copy(inputStream1, Paths.get(tempFilePath1), StandardCopyOption.REPLACE_EXISTING);
         Files.copy(inputStream2, Paths.get(tempFilePath2), StandardCopyOption.REPLACE_EXISTING);
 
@@ -170,10 +169,10 @@ public class FileImportServiceTest {
         fileImportService.importFile(tempFilePath2, session2.getId());
 
         // Upewnienie się, że metoda asynchroniczna się skończyła
-        Thread.sleep(6000);
+        Thread.sleep(3000);
 
         // Then
-        assertEquals(2, personRepository.count(), "Powinny być 2 osoby w db");
+        assertEquals(2, personRepository.count(), "Should be 2 persons in db");
         ImportStatus updatedSession1 = importSessionRepository.findById(session1.getId()).orElseThrow();
         ImportStatus updatedSession2 = importSessionRepository.findById(session2.getId()).orElseThrow();
         assertEquals("COMPLETED", updatedSession1.getStatus(), "The first import session should be completed");

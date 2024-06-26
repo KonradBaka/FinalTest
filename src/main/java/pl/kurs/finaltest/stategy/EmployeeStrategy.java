@@ -1,6 +1,5 @@
 package pl.kurs.finaltest.stategy;
 
-import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,6 +49,7 @@ public class EmployeeStrategy implements PersonTypeStrategy<Employee, EmployeeDt
     @Override
     public Employee editPerson(Long id, EmployeeDto employeeDto) {
         Employee employee = (Employee) personRepository.findPersonByIdWithOptymisticLock(id).orElseThrow(UserNotFoundException::new);
+        employeeDto.setId(id);
         modelMapper.map(employeeDto, employee);
         return personRepository.save(employee);
     }

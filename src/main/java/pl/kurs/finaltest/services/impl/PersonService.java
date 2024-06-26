@@ -47,18 +47,20 @@ public class PersonService implements IPersonService {
 
     @Override
     public <T extends PersonDto> T editPerson(Long id, T personDto) {
-        PersonTypeStrategy<? extends Person, ? extends PersonDto> strategy = strategyManager.getStrategy(personDto.getType());
+        T specificDto = modelMapper.map(personDto, (Class<T>) personDto.getClass());
+
+        PersonTypeStrategy<? extends Person, ? extends PersonDto> strategy = strategyManager.getStrategy(specificDto.getType());
 
         if (strategy == null) {
-            throw new InvalidInputData("Nie znaleziono strategii dla podanego typu: " + personDto.getType());
+            throw new InvalidInputData("Nie znaleziono strategii dla podanego typu: " + specificDto.getType());
         }
-        if (!strategy.supports(personDto)) {
-            throw new InvalidInputData("Strategia nie obsługuje podanego typu DTO: " + personDto.getClass().getName());
+        if (!strategy.supports(specificDto)) {
+            throw new InvalidInputData("Strategia nie obsługuje podanego typu DTO: " + specificDto.getClass().getName());
         }
 
         @SuppressWarnings("unchecked")
         PersonTypeStrategy<? extends Person, T> castedStrategy = (PersonTypeStrategy<? extends Person, T>) strategy;
-        Person person = castedStrategy.editPerson(id, personDto);
+        Person person = castedStrategy.editPerson(id, specificDto);
         return modelMapper.map(person, (Class<T>) personDto.getClass());
     }
 
